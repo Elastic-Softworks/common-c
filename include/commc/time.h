@@ -27,11 +27,11 @@
 	==================================
 */
 
-#ifndef COMMC_TIME_H
-#define COMMC_TIME_H
+#ifndef   COMMC_TIME_H
+#define   COMMC_TIME_H
 
-#include <stddef.h>
-#include <time.h>
+#include  <stddef.h>
+#include  <time.h>
 
 /*
 	==================================

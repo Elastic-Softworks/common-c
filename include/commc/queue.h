@@ -24,12 +24,12 @@
 	==================================
 */
 
-#ifndef COMMC_QUEUE_H
-#define COMMC_QUEUE_H
+#ifndef   COMMC_QUEUE_H
+#define   COMMC_QUEUE_H
 
-#include <stddef.h>
+#include  <stddef.h>
 
-#include "commc/list.h"
+#include  "commc/list.h"
 
 /*
 	==================================

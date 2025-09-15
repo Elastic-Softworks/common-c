@@ -23,19 +23,24 @@
 	==================================
 */
 
-#include <stdlib.h>      /* for malloc, free */
-#include <string.h>      /* for memcpy, strlen */
+#include  <stdlib.h>      /* for malloc, free */
+#include  <string.h>      /* for memcpy, strlen */
 
-#include "commc/file.h"
-#include "commc/error.h" /* for error handling */
+#include  "commc/file.h"
+#include  "commc/error.h" /* for error handling */
 
 #ifdef _WIN32
-#include <direct.h>      /* for _mkdir, _rmdir */
-#include <io.h>          /* for _access */
-#define F_OK 0           /* for _access compatibility */
+
+#include  <direct.h>      /* for _mkdir, _rmdir */
+#include  <io.h>          /* for _access */
+
+#define   F_OK 0          /* for _access compatibility */
+
 #else
-#include <sys/stat.h>    /* for mkdir */
-#include <unistd.h>      /* for rmdir, access */
+
+#include  <sys/stat.h>    /* for mkdir */
+#include  <unistd.h>      /* for rmdir, access */
+
 #endif
 
 /*
@@ -57,12 +62,13 @@ static const char* get_file_mode_string(commc_file_mode_t mode) {
 
   switch  (mode) {
 
-    case COMMC_FILE_READ:        return "rb";
-    case COMMC_FILE_WRITE:       return "wb";
-    case COMMC_FILE_APPEND:      return "ab";
-    case COMMC_FILE_READ_WRITE:  return "r+b";
-    case COMMC_FILE_READ_APPEND: return "a+b";
-    default:                     return NULL;
+    case COMMC_FILE_READ:         return "rb";
+    case COMMC_FILE_WRITE:        return "wb";
+    case COMMC_FILE_APPEND:       return "ab";
+    case COMMC_FILE_READ_WRITE:   return "r+b";
+    case COMMC_FILE_READ_APPEND:  return "a+b";
+
+    default:                      return NULL;
 
   }
 
@@ -89,6 +95,7 @@ FILE* commc_file_open(const char* path, commc_file_mode_t mode) {
   if  (!path) {
 
     commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+
     return NULL;
 
   }
@@ -98,6 +105,7 @@ FILE* commc_file_open(const char* path, commc_file_mode_t mode) {
   if  (!mode_str) {
 
     commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    
     return NULL;
 
   }

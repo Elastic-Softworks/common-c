@@ -26,11 +26,11 @@
 	==================================
 */
 
-#ifndef COMMC_FILE_H
-#define COMMC_FILE_H
+#ifndef   COMMC_FILE_H
+#define   COMMC_FILE_H
 
-#include <stddef.h>      /* for size_t */
-#include <stdio.h>       /* for FILE */
+#include  <stddef.h>      /* for size_t */
+#include  <stdio.h>       /* for FILE */
 
 /*
 	==================================

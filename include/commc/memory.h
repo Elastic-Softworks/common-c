@@ -25,10 +25,10 @@
 	==================================
 */
 
-#ifndef COMMC_MEMORY_H
-#define COMMC_MEMORY_H
+#ifndef   COMMC_MEMORY_H
+#define   COMMC_MEMORY_H
 
-#include <stddef.h>
+#include  <stddef.h>
 
 /*
 	==================================
@@ -38,7 +38,7 @@
 
 /* opaque type for memory pool. */
 
-typedef struct commc_memory_pool_t commc_memory_pool_t; 
+typedef struct  commc_memory_pool_t commc_memory_pool_t; 
 
 /*
 	==================================

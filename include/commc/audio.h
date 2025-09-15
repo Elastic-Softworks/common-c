@@ -28,10 +28,10 @@
 	==================================
 */
 
-#ifndef COMMC_AUDIO_H
-#define COMMC_AUDIO_H
+#ifndef   COMMC_AUDIO_H
+#define   COMMC_AUDIO_H
 
-#include <stddef.h>                   /* for size_t */
+#include  <stddef.h>                   /* for size_t */
 
 /*
 	==================================
@@ -39,7 +39,7 @@
 	==================================
 */
 
-#define COMMC_AUDIO_MAX_CHANNELS 8   /* maximum number of simultaneous 
+#define  COMMC_AUDIO_MAX_CHANNELS 8   /* maximum number of simultaneous 
                                          sound channels */
 
 /*

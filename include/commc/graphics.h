@@ -28,10 +28,10 @@
 	==================================
 */
 
-#ifndef COMMC_GRAPHICS_H
-#define COMMC_GRAPHICS_H
+#ifndef   COMMC_GRAPHICS_H
+#define   COMMC_GRAPHICS_H
 
-#include <stddef.h>       /* for size_t */
+#include  <stddef.h>       /* for size_t */
 
 /*
 	==================================
@@ -65,10 +65,10 @@ typedef struct {
 
 typedef struct {
 
-  unsigned char*  pixels; /* raw pixel data (RGBA) */
+  unsigned char*  pixels;    /* raw pixel data (RGBA) */
 
-  int  width;  /* width in pixels */
-  int  height; /* height in pixels */
+  int  width;                /* width in pixels */
+  int  height;               /* height in pixels */
 
 } commc_bitmap_t;
 

@@ -25,18 +25,16 @@
 	==================================
 */
 
-#ifndef COMMC_HASH_TABLE_H
-#define COMMC_HASH_TABLE_H
+#ifndef  COMMC_HASH_TABLE_H
+#define  COMMC_HASH_TABLE_H
 
-#include <stddef.h> /* for size_t */
+#include  <stddef.h> 			/* for size_t */
 
 /*
 	==================================
              --- STRUCTS ---
 	==================================
 */
-
-/* opaque hash table structure. */
 
 typedef struct commc_hash_table_t commc_hash_table_t;
 

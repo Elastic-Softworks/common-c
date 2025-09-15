@@ -24,12 +24,12 @@
 	==================================
 */
 
-#ifndef COMMC_STACK_H
-#define COMMC_STACK_H
+#ifndef   COMMC_STACK_H
+#define   COMMC_STACK_H
 
-#include <stddef.h>
+#include  <stddef.h>
 
-#include "commc/list.h"
+#include  "commc/list.h"
 
 /*
 	==================================
@@ -37,7 +37,7 @@
 	==================================
 */
 
-typedef commc_list_t commc_stack_t;
+typedef  commc_list_t commc_stack_t;
 
 /*
 	==================================

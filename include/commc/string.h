@@ -24,10 +24,10 @@
 	==================================
 */
 
-#ifndef COMMC_STRING_H
-#define COMMC_STRING_H
+#ifndef   COMMC_STRING_H
+#define   COMMC_STRING_H
 
-#include <stddef.h> /* for size_t */
+#include  <stddef.h> /* for size_t */
 
 /*
 	==================================

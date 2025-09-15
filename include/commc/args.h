@@ -22,10 +22,10 @@
 	==================================
 */
 
-#ifndef COMMC_ARGS_H
-#define COMMC_ARGS_H
+#ifndef   COMMC_ARGS_H
+#define   COMMC_ARGS_H
 
-#include <stddef.h>       /* for size_t */
+#include  <stddef.h>      /* for size_t */
 
 /*
 	==================================

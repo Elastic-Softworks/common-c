@@ -24,10 +24,10 @@
 	==================================
 */
 
-#ifndef COMMC_MATH_H
-#define COMMC_MATH_H
+#ifndef   COMMC_MATH_H
+#define   COMMC_MATH_H
 
-#include <math.h> 								  /* for sin, cos, sqrt, tan */
+#include  <math.h> 								  /* for sin, cos, sqrt, tan */
 
 /*
 	==================================

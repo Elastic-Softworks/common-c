@@ -22,12 +22,12 @@
 	==================================
 */
 
-#include "commc/args.h"
-#include "commc/error.h"     /* for error handling */
-#include "commc/string.h"    /* for string utilities */
-#include <stdlib.h>          /* for malloc, free */
-#include <string.h>          /* for strcmp, strdup, strlen */
-#include <stdio.h>           /* for printf, fprintf */
+#include  "commc/args.h"
+#include  "commc/error.h"     /* for error handling */
+#include  "commc/string.h"    /* for string utilities */
+#include  <stdlib.h>          /* for malloc, free */
+#include  <string.h>          /* for strcmp, strdup, strlen */
+#include  <stdio.h>           /* for printf, fprintf */
 
 /*
 	==================================
@@ -35,10 +35,10 @@
 	==================================
 */
 
-#define MAX_ARGS_COUNT 64    /* maximum number of arguments supported */
-#define MAX_NAME_LEN   32    /* maximum length for short/long names */
-#define MAX_DESC_LEN   128   /* maximum length for description */
-#define MAX_VALUE_LEN  256   /* maximum length for option values */
+#define  MAX_ARGS_COUNT  64    /* maximum number of arguments supported */
+#define  MAX_NAME_LEN    32    /* maximum length for short/long names */
+#define  MAX_DESC_LEN    128   /* maximum length for description */
+#define  MAX_VALUE_LEN   256   /* maximum length for option values */
 
 /*
 	==================================
@@ -65,11 +65,11 @@ typedef struct {
 
 struct commc_args_parser_t {
 
-  commc_arg_def_t args[MAX_ARGS_COUNT];
-  size_t          num_args;
-  char**          positional_values;
-  size_t          num_positional_parsed;
-  size_t          max_positional_defs;
+  commc_arg_def_t  args[MAX_ARGS_COUNT];
+  size_t           num_args;
+  char**           positional_values;
+  size_t           num_positional_parsed;
+  size_t           max_positional_defs;
 
 };
 
@@ -129,6 +129,7 @@ commc_args_parser_t* commc_args_parser_create(void) {
   if  (!parser) {
 
     commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
+
     return NULL;
 
   }
@@ -186,21 +187,24 @@ void commc_args_parser_destroy(commc_args_parser_t* parser) {
 
 */
 
-int commc_args_add_flag(commc_args_parser_t* parser, const char* short_name, const char* long_name, const char* description) {
+int commc_args_add_flag(commc_args_parser_t* parser, const char* short_name, const char* long_name, 
+                                                                             const char* description) {
 
   commc_arg_def_t* arg_def;
 
   if  (!parser || parser->num_args >= MAX_ARGS_COUNT) {
 
     commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
+
     return 0;
 
   }
 
-  arg_def = &parser->args[parser->num_args];
+  arg_def   = &parser->args[parser->num_args];
+
   memset(arg_def, 0, sizeof(commc_arg_def_t));
 
-  arg_def->type = COMMC_ARG_FLAG;
+  arg_def->type  = COMMC_ARG_FLAG;
 
   if  (short_name) {
 
@@ -222,8 +226,8 @@ int commc_args_add_flag(commc_args_parser_t* parser, const char* short_name, con
 
   parser->num_args++;
 
-  return 1;
 
+  return 1;
 }
 
 /*
@@ -241,11 +245,13 @@ int commc_args_add_option(commc_args_parser_t* parser, const char* short_name, c
   if  (!parser || parser->num_args >= MAX_ARGS_COUNT) {
 
     commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
+
     return 0;
 
   }
 
-  arg_def = &parser->args[parser->num_args];
+  arg_def  = &parser->args[parser->num_args];
+
   memset(arg_def, 0, sizeof(commc_arg_def_t));
 
   arg_def->type = COMMC_ARG_OPTION;
@@ -361,6 +367,7 @@ int commc_args_parse(commc_args_parser_t* parser, int argc, char* argv[]) {
     if  (!parser->positional_values) {
 
       commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
+
       return 0;
 
     }
@@ -405,14 +412,14 @@ int commc_args_parse(commc_args_parser_t* parser, int argc, char* argv[]) {
 
             if  (arg_def->type == COMMC_ARG_FLAG) {
 
-              arg_def->is_set = 1;
+              arg_def->is_set  = 1;
 
             } else if  (arg_def->type == COMMC_ARG_OPTION) {
 
               if  (i + 1 < argc) {    /* check for value */
 
                 commc_string_copy(arg_def->parsed_value, argv[i+1], MAX_VALUE_LEN);
-                arg_def->is_set = 1;
+                arg_def->is_set  = 1;
 
                 i++;                  /* consume next argument as value */
 
@@ -484,6 +491,7 @@ int commc_args_parse(commc_args_parser_t* parser, int argc, char* argv[]) {
         if  (!parser->positional_values[positional_idx]) {
 
           commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
+          
           return 0;
 
         }

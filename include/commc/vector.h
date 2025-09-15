@@ -25,10 +25,10 @@
 	==================================
 */
 
-#ifndef COMMC_VECTOR_H
-#define COMMC_VECTOR_H
+#ifndef   COMMC_VECTOR_H
+#define   COMMC_VECTOR_H
 
-#include <stddef.h>       /* for size_t */
+#include  <stddef.h>       /* for size_t */
 
 /*
 	==================================

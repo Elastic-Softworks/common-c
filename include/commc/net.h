@@ -28,10 +28,10 @@
 	==================================
 */
 
-#ifndef COMMC_NET_H
-#define COMMC_NET_H
+#ifndef   COMMC_NET_H
+#define   COMMC_NET_H
 
-#include <stddef.h>       /* for size_t */
+#include  <stddef.h>       /* for size_t */
 
 /*
 	==================================

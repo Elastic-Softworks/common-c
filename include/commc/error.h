@@ -26,10 +26,10 @@
 	==================================
 */
 
-#ifndef COMMC_ERROR_H
-#define COMMC_ERROR_H
+#ifndef   COMMC_ERROR_H
+#define   COMMC_ERROR_H
 
-#include <stdio.h>
+#include  <stdio.h>
 
 /*
 	==================================

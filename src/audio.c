@@ -24,12 +24,12 @@
 	==================================
 */
 
-#include <stdlib.h>       /* for malloc, free */
-#include <string.h>       /* for memset */
-#include <stdio.h>        /* for printf (conceptual logging) */
+#include  <stdlib.h>       /* for malloc, free */
+#include  <string.h>       /* for memset */
+#include  <stdio.h>        /* for printf (conceptual logging) */
 
-#include "commc/audio.h"
-#include "commc/error.h"  /* for error handling */
+#include  "commc/audio.h"
+#include  "commc/error.h"  /* for error handling */
 
 /*
 	==================================
