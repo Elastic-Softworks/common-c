@@ -35,7 +35,7 @@ COMMON-C encompasses (at present time):
   - **Queue**: **FIFO** structure supporting enqueue and dequeue operations; common **O(1)** implementations use circular buffers or linked lists.
   - **Stack**: **LIFO** structure supporting push/pop operations; **O(1)** operations using arrays or linked lists.
 
-  - **Hash tables** and **tree implementations**
+- **Hash tables** and **tree implementations**
   - **Hash table**: map keys to values using a hash function `h(key)` producing bucket indices; collision resolution via chaining or open addressing. Average-case **O(1)** for insert/lookup/delete; performance depends on load factor and hash quality.
   - **Tree implementations**: hierarchical node structures. **Binary search trees** provide ordered storage with **O(h)** lookup where `h` is tree height; balanced trees (**AVL**, **Red-Black**) maintain `h = O(log n)` for guaranteed logarithmic operations. **B-trees** and variants are used for disk-optimized storage.
 
