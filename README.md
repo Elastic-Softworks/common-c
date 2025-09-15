@@ -12,13 +12,11 @@ COMMON-C encompasses (at present time):
 
 ### Core Systems
 
-- **Error handling** and **memory management**
-- **String manipulation** and **time utilities**
-- **Platform abstraction layers**
 
-  - **Error handling** and **memory management**
-    - **Error handling**: detect and represent abnormal conditions using return codes, error values, or status flags; propagate errors to the caller; provide *deterministic cleanup* and clear error reporting.
-    - **Memory management**: allocate and free heap memory (*e.g.*, `malloc`/`free`), track ownership and lifetimes, avoid leaks and double-free, and manage fragmentation. Also covers stack vs heap allocation and strategies like *pooling* or *reference counting*.
+
+- **Error handling** and **memory management**
+  - **Error handling**: detect and represent abnormal conditions using return codes, error values, or status flags; propagate errors to the caller; provide *deterministic cleanup* and clear error reporting.
+  - **Memory management**: allocate and free heap memory (*e.g.*, `malloc`/`free`), track ownership and lifetimes, avoid leaks and double-free, and manage fragmentation. Also covers stack vs heap allocation and strategies like *pooling* or *reference counting*.
 
   - **String manipulation** and **time utilities**
     - **String manipulation**: functions operating on sequences of bytes terminated by a NUL character (`char *` in C). Includes length, copy, concatenation, compare, search, split/tokenize, and formatted conversion. Key concerns: buffer sizing, encoding assumptions, and correct NUL termination.
@@ -29,38 +27,31 @@ COMMON-C encompasses (at present time):
 
 ### Data Structures
 
-- **Dynamic arrays**, **linked lists**, **queues**, **stacks**
-- **Hash tables** and **tree implementations**
-- **Graph structures** and **specialized containers**
 
-  - **Dynamic arrays**, **linked lists**, **queues**, **stacks**
-    - **Dynamic array**: contiguous memory for elements with **O(1)** indexed access; resizing copies elements to a larger block when capacity is exceeded (amortized **O(1)** append).
-    - **Linked list**: chain of nodes with pointers to next (and optionally previous) nodes; **O(1)** insertion/removal given a node, **O(n)** random access.
-    - **Queue**: **FIFO** structure supporting enqueue and dequeue operations; common **O(1)** implementations use circular buffers or linked lists.
-    - **Stack**: **LIFO** structure supporting push/pop operations; **O(1)** operations using arrays or linked lists.
+
+- **Dynamic arrays**, **linked lists**, **queues**, **stacks**
+  - **Dynamic array**: contiguous memory for elements with **O(1)** indexed access; resizing copies elements to a larger block when capacity is exceeded (amortized **O(1)** append).
+  - **Linked list**: chain of nodes with pointers to next (and optionally previous) nodes; **O(1)** insertion/removal given a node, **O(n)** random access.
+  - **Queue**: **FIFO** structure supporting enqueue and dequeue operations; common **O(1)** implementations use circular buffers or linked lists.
+  - **Stack**: **LIFO** structure supporting push/pop operations; **O(1)** operations using arrays or linked lists.
 
   - **Hash tables** and **tree implementations**
-    - **Hash table**: map keys to values using a hash function `h(key)` producing bucket indices; collision resolution via chaining or open addressing. Average-case **O(1)** for insert/lookup/delete; performance depends on load factor and hash quality.
-    - **Tree implementations**: hierarchical node structures. **Binary search trees** provide ordered storage with **O(h)** lookup where `h` is tree height; balanced trees (**AVL**, **Red-Black**) maintain `h = O(log n)` for guaranteed logarithmic operations. **B-trees** and variants are used for disk-optimized storage.
+  - **Hash table**: map keys to values using a hash function `h(key)` producing bucket indices; collision resolution via chaining or open addressing. Average-case **O(1)** for insert/lookup/delete; performance depends on load factor and hash quality.
+  - **Tree implementations**: hierarchical node structures. **Binary search trees** provide ordered storage with **O(h)** lookup where `h` is tree height; balanced trees (**AVL**, **Red-Black**) maintain `h = O(log n)` for guaranteed logarithmic operations. **B-trees** and variants are used for disk-optimized storage.
 
-  - **Graph structures** and **specialized containers**
-    - **Graph**: set of vertices and edges (directed or undirected). Representations: adjacency list (per-vertex neighbor lists) or adjacency matrix (2D matrix of weights/flags). Core algorithms: **BFS**/**DFS** traversal, shortest path (**Dijkstra**), connectivity and cycle detection. Complexity depends on representation and algorithm.
-    - **Specialized containers**: data structures optimized for specific constraints (*e.g.*, priority queue with **O(log n)** extract-min, bloom filter for probabilistic membership, sparse/dense sets for different memory/access tradeoffs).
+- **Graph structures** and **specialized containers**
+  - **Graph**: set of vertices and edges (directed or undirected). Representations: adjacency list (per-vertex neighbor lists) or adjacency matrix (2D matrix of weights/flags). Core algorithms: **BFS**/**DFS** traversal, shortest path (**Dijkstra**), connectivity and cycle detection. Complexity depends on representation and algorithm.
+  - **Specialized containers**: data structures optimized for specific constraints (*e.g.*, priority queue with **O(log n)** extract-min, bloom filter for probabilistic membership, sparse/dense sets for different memory/access tradeoffs).
 
 ### Mathematics
 
 - **Vector** and **matrix operations**
-- **Trigonometric functions**
-- **Random number generation**
-
-  - **Vector** and **matrix operations**
-    - **Vector**: ordered tuple of numeric components, *e.g.* `v = [x, y, z]`. Operations: addition `v + w` (component-wise), scalar multiplication `a * v`, dot product `dot(v, w) = sum(v_i * w_i)` producing a scalar, and cross product (3D) producing a vector orthogonal to inputs.
+  - **Vector**: ordered tuple of numeric components, *e.g.* `v = [x, y, z]`. Operations: addition `v + w` (component-wise), scalar multiplication `a * v`, dot product `dot(v, w) = sum(v_i * w_i)` producing a scalar, and cross product (3D) producing a vector orthogonal to inputs.
     - **Matrix**: 2D array of numbers. Matrix multiplication `A * B` composes linear transformations. Common operations: multiply, transpose, inverse (if invertible), and application to vectors for linear transforms (rotation, scaling). Use homogeneous coordinates for translations in affine transforms.
-
-  - **Trigonometric functions**
+- **Trigonometric functions**
     - **Sine**, **cosine**, **tangent**: functions of an angle (radians) mapping to ratios or unit-circle coordinates. Properties: periodicity, derivatives, and algebraic identities (*e.g.*, `sin^2 x + cos^2 x = 1`). Used for rotations and oscillatory computations.
 
-  - **Random number generation**
+- **Random number generation**
     - **Pseudo-random number generators (PRNGs)**: deterministic stateful algorithms producing sequences approximating statistical randomness. Use a seed for reproducibility. Provide uniform and non-uniform sampling (*e.g.*, Gaussian), shuffling, and sampling with/without replacement.
 
 ### File & Network I/O
