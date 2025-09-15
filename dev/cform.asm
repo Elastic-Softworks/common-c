@@ -1,7 +1,7 @@
 ;;    ===================================
 ;;    C - F O R M ( ASM )
 ;;    ASM FORMATTING GUIDE
-;;    CG MOON / ELASTIC SOFTWORKS 2025
+;;    ELASTIC SOFTWORKS 2025
 ;;    ===================================
 
 

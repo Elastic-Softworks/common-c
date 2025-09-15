@@ -2,7 +2,7 @@
    ===================================
    C - F O R M  ( C )
    C FORMATTING GUIDE
-   CG MOON / ELASTIC SOFTWORKS 2025
+   ELASTIC SOFTWORKS 2025
    ===================================
 */
 
@@ -74,9 +74,19 @@ void my_function(int parameter_one, char* parameter_two) {
                                name, and semicolon for a clean,
                                tabular look. */
 								 
-  float  down_here;  /* for longer, lengthier, more
-                        conversational comment code, opt   
-                        for lower-case type */
+  float  down_here;         /* for longer, lengthier, more
+                               conversational comment code, opt   
+                               for lower-case type */
+
+  typedef struct {
+
+  commc_button button;
+
+  int  pressed;                 /* ints in typedefs*/
+  int  x;                       /* are seperated, with */
+  int  y;                       /* double spacing for visibility */
+
+} commc_mouse_button_event_t;
 
   local_variable   = 100;
   pointer_variable = "C-FORM"; /* align assignments vertically */
