@@ -1,4 +1,4 @@
-# COMMON-C (COMM-C)
+# COMMON-C *(commc)*
 
 ## Overview
 
