@@ -4,7 +4,7 @@
 
 *COMMON-C* is a collection of Post-FOSS C libraries providing foundational low-level tools for software and game development. The project maintains strict **C89** compliance for maximum compatibility.
 
-*COMMON-C* operates as a federated collection of open source functions - both ported from existing projects and newly developed - reorganized into a unified framework. While the code is aggregated in one accessible location for convenience, the project maintains no central authority over its use, modification, or redistribution."
+*COMMON-C* is a collection of open source functions - both ported from existing projects and newly developed - reorganized into a unified framework. While the code is aggregated in one accessible location for convenience, the project maintains no central authority over its use, modification, or redistribution."
 
 ## Project Scope
 
@@ -52,7 +52,7 @@ Full license texts are available in LICENSE.txt.
 
 ## Development
 
-COMMON-C is maintained by members of **Elastic Softworks**.
+This particular branch of COMMON-C is maintained by members of **Elastic Softworks**.
 
 All libraries adhere to:
 - C89/ANSI C standard compliance
