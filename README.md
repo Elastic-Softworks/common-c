@@ -1,5 +1,7 @@
 # COMMON-C *(commc)*
 
+![COMMC logo](docs/img/commc.png)
+
 ## Overview
 
 *COMMON-C* is a collection of Post-FOSS C libraries providing foundational low-level tools for software and game development. The project maintains strict **C89** compliance for maximum compatibility.
