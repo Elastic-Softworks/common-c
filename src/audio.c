@@ -252,6 +252,7 @@ void commc_sound_destroy(commc_sound_t* sound) {
   if  (sound) {
 
     printf("SOUND DESTROYED...!\n");
+
     free(sound);
 
   }
@@ -272,11 +273,13 @@ int commc_sound_play(commc_audio_context_t* context, commc_sound_t* sound, int c
   if  (!context || !sound || channel < 0 || channel >= COMMC_AUDIO_MAX_CHANNELS || volume < 0.0f || volume > 1.0f) {
 
     commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+
     return 0;
 
   }
 
   printf("PLAYING SOUND ON CHANNEL %d (VOLUME: %.2f, LOOPS: %d)...!\n", channel, volume, loops);
+
   return 1;
 
 }
@@ -295,6 +298,7 @@ void commc_sound_stop(commc_audio_context_t* context, int channel) {
   if  (!context || channel < 0 || channel >= COMMC_AUDIO_MAX_CHANNELS) {
 
     commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+
     return;
 
   }
@@ -319,6 +323,7 @@ commc_music_t* commc_music_load(commc_audio_context_t* context, const commc_audi
   if  (!context || !buffer) {
 
     commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+
     return NULL;
 
   }
@@ -328,6 +333,7 @@ commc_music_t* commc_music_load(commc_audio_context_t* context, const commc_audi
   if  (!music) {
 
     commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
+
     return NULL;
 
   }
@@ -354,6 +360,7 @@ void commc_music_destroy(commc_music_t* music) {
   if  (music) {
 
     printf("MUSIC DESTROYED...!\n");
+    
     free(music);
 
   }
@@ -379,6 +386,7 @@ int commc_music_play(commc_audio_context_t* context, commc_music_t* music, float
   }
 
   printf("PLAYING MUSIC (VOLUME: %.2f, LOOPS: %d)...!\n", volume, loops);
+
   return 1;
 
 }
