@@ -105,15 +105,16 @@ COMMON-C encompasses (at present time):
     - **Keyboard**: capture key codes and state transitions (down/up) and optionally text input with Unicode composition. Include timestamps and repeat handling.
     - **Mouse**: capture pointer coordinates, button states, wheel deltas, and relative motion. Provide event-driven and polling interfaces, and map raw device coordinates to window/screen coordinates.
 
-## Distribution
+## Licensing
 
-This project is released under multiple licenses. Users may choose to operate under any or all of the following:
+```text
+This project is licensed under:
+- ANTI-CAPITALIST SOFTWARE LICENSE (v1.4)
+- the fuck around and find out license (v0.1)
+- HIPPOCRATIC LICENSE (v3.0)
 
-- Anti-Capitalist Software License (v1.4)
-- Fuck Around and Find Out License (v0.1)  
-- Hippocratic License (v3.0)
-
-Full license texts are available in LICENSE.txt.
+You may choose to use this software under the terms of any/all license(s).
+```
 
 ## Development
 
