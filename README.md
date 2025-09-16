@@ -1,6 +1,6 @@
 # COMMON-C *(commc)*
 
-![COMMC logo](docs/img/commc.png)
+![COMMC logo](dev/commc.png)
 
 ## Overview
 
@@ -29,8 +29,6 @@ COMMON-C encompasses (at present time):
 
 ### Data Structures
 
-
-
 - **Dynamic arrays**, **linked lists**, **queues**, **stacks**
   - **Dynamic array**: contiguous memory for elements with **O(1)** indexed access; resizing copies elements to a larger block when capacity is exceeded (amortized **O(1)** append).
   - **Linked list**: chain of nodes with pointers to next (and optionally previous) nodes; **O(1)** insertion/removal given a node, **O(n)** random access.
@@ -58,52 +56,40 @@ COMMON-C encompasses (at present time):
 
 ### File & Network I/O
 
-- Binary file operations
-- Directory management
+- **Binary file operations**
+  - Read and write raw byte sequences to files. Concerns: **endianness** (byte order), fixed-size records, seeking (file offsets), alignment, and structured serialization/deserialization.
+
+- **Directory management**
+  - Enumerate directory entries, create/remove directories, manipulate and normalize file paths, and read file metadata (size, timestamps, permissions). Account for platform-specific path separators and permission semantics.
+
 - Cross-platform TCP/UDP socket abstractions
-
-  - Binary file operations
-    - Read and write raw byte sequences to files. Concerns: **endianness** (byte order), fixed-size records, seeking (file offsets), alignment, and structured serialization/deserialization.
-
-  - Directory management
-    - Enumerate directory entries, create/remove directories, manipulate and normalize file paths, and read file metadata (size, timestamps, permissions). Account for platform-specific path separators and permission semantics.
-
-  - Cross-platform TCP/UDP socket abstractions
-    - **TCP**: connection-oriented byte-stream transport providing reliable, ordered delivery; APIs include connect/listen/accept/read/write/close.
-    - **UDP**: connectionless datagram transport providing message-oriented send/receive without delivery or ordering guarantees.
-    - Abstractions normalize differences between socket implementations (**POSIX** vs **Winsock**), initialization, error codes, and socket options.
+  - **TCP**: connection-oriented byte-stream transport providing reliable, ordered delivery; APIs include connect/listen/accept/read/write/close.
+  - **UDP**: connectionless datagram transport providing message-oriented send/receive without delivery or ordering guarantees.
+  - Abstractions normalize differences between socket implementations (**POSIX** vs **Winsock**), initialization, error codes, and socket options.
 
 ### Development Tools
 
-- Command-line argument parsing
-- Configuration file handling
-- Logging and debugging utilities
-
-  - Command-line argument parsing
+  - **Command-line argument parsing**
     - Parse `argc/argv` into typed options: boolean flags, options with values (*e.g.*, `--file <path>`), and positional arguments. Validate values, provide defaults, and produce clear error messages for malformed inputs.
 
-  - Configuration file handling
+  - **Configuration file handling**
     - Parse structured configuration formats (**INI**, **JSON**, or custom key-value), validate types and ranges, merge with defaults, and expose typed configuration to the program.
 
-  - Logging and debugging utilities
+  - **Logging and debugging utilities**
     - **Logging**: emit timestamped messages with severity levels (debug/info/warn/error), configurable outputs (console, file), and optional rotation/retention. Useful for post-mortem analysis.
     - **Debugging utilities**: assertions, diagnostic hooks, and instrumentation for inspecting invariants and internal state during development builds.
 
 ### Media Abstractions
 
-- 2D graphics primitives for bitmaps and sprites
-- PCM audio playback and mixing concepts
-- Input handling for keyboard and mouse
-
-  - 2D graphics primitives for bitmaps and sprites
+  - 2D graphics primitives**
     - **Bitmap**: rectangular array of pixels with width, height, and a pixel format (*e.g.*, 24-bit RGB, 32-bit RGBA). Operations: pixel read/write, blit (copy), scaling, and alpha blending.
     - **Sprite**: image or sub-image with position and optional transform parameters (translation, rotation, scale); rendering composes sprites onto a framebuffer using blend modes.
 
-  - PCM audio playback and mixing concepts
+  - **PCM audio playback** and **mixing**
     - **PCM (Pulse-Code Modulation)**: discrete audio samples per channel at a fixed sample rate (*e.g.*, 44100 Hz). Each sample is a numeric amplitude. Playback involves buffering frames to an audio device and handling latency.
     - **Mixing**: combine multiple PCM streams by summing samples with scaling to prevent clipping; may require resampling or channel mapping when sources differ.
 
-  - Input handling for keyboard and mouse
+  - **Input handling**
     - **Keyboard**: capture key codes and state transitions (down/up) and optionally text input with Unicode composition. Include timestamps and repeat handling.
     - **Mouse**: capture pointer coordinates, button states, wheel deltas, and relative motion. Provide event-driven and polling interfaces, and map raw device coordinates to window/screen coordinates.
 
@@ -142,3 +128,5 @@ This project is licensed under:
 
 You may choose to use this software under the terms of any/all license(s).
 ```
+
+[![Hippocratic License HL3-CORE](https://img.shields.io/static/v1?label=Hippocratic%20License&message=HL3-CORE&labelColor=5e2751&color=bc8c3d)](https://firstdonoharm.dev/version/3/0/core.html)

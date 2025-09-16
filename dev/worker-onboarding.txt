@@ -1,0 +1,28 @@
+WITH REGARDS TO:
+
+FORMATTING:
+
+    - Refer to dev/cform.c and dev/cform.asm and the current codebase for how to format your code.
+
+TECHNICAL:
+
+    - IF YOU ARE NEW: Make sure to examine THE WHOLE CODEBASE before writing anything.
+
+    - Maintain STRICT C89 compliance.
+ 
+    - If C89 does not allow for a certain function, and all other avenues fail,
+      refer to ASM and make a cross-compiled solution to have C/ASM work in tandem to
+      realize the function. 
+
+    - Do not write any functions that are already covered in the C Standard Library
+
+COMMENTARY:
+
+    - Ensure all functionality and systemic movements are well documented and thoroughly
+      explained. Make sure that all educational language assumes the user is new to programming,
+      but do not condescend: Opt to thoroughly explain all systems as they are, mathematical
+      operations.
+
+Thank you, and good luck.
+
+CG
