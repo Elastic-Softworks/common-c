@@ -35,6 +35,7 @@ BUILD_DIR := build
 TEST_DIR := test
 
 # source files
+
 SOURCES := $(SRC_DIR)/args.c \
            $(SRC_DIR)/audio.c \
            $(SRC_DIR)/error.c \
@@ -97,6 +98,20 @@ $(LIBRARY): $(OBJECTS)
 test-compile: $(OBJECTS)
 	@echo "All source files compiled successfully!"
 
+# testing framework
+
+TEST_SOURCES := $(wildcard $(TEST_DIR)/test_*.c)
+TEST_EXECUTABLES := $(TEST_SOURCES:$(TEST_DIR)/%.c=$(BUILD_DIR)/%)
+
+test: $(LIBRARY) $(TEST_EXECUTABLES)
+	@echo "RUNNING TESTS..."
+	@for test_exe in $(TEST_EXECUTABLES); do \
+		./$$test_exe; \
+	done
+
+$(BUILD_DIR)/%: $(TEST_DIR)/%.c
+	$(CC) $(CFLAGS) $< -o $@ $(LIBRARY)
+
 # clean build artifacts
 
 clean:
@@ -127,10 +142,11 @@ help:
 	@echo "  ALL           - BUILD DEBUG VERSION (DEFAULT)"
 	@echo "  DEBUG         - BUILD WITH DEBUG SYMBOLS"
 	@echo "  RELEASE       - BUILD OPTIMIZED VERSION"
+	@echo "  TEST          - COMPILE AND RUN ALL TESTS"
 	@echo "  TEST-COMPILE  - TEST COMPILATION WITHOUT LINKING"
 	@echo "  CLEAN         - REMOVE BUILD ARTIFACTS"
 	@echo "  CHECK         - CHECK FOR COMMON ISSUES"
 	@echo "  REBUILD       - CLEAN AND REBUILD"
 	@echo "  HELP          - SHOW THIS HELP MESSAGE"
 
-.PHONY: all debug release test-compile clean install check rebuild help
+.PHONY: all debug release test test-compile clean install check rebuild help

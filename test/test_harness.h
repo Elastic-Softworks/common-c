@@ -1,6 +1,6 @@
 /* ============================================================================
  *  COMMON-C TEST HARNESS
- *  A lightweight, zero-dependency testing framework for C89.
+ *  TESTING FRAMEWORK FOR C89.
  *  ELASTIC SOFTWORKS 2025
  *
  *  This header-only library provides a simple set of macros and functions
@@ -94,9 +94,10 @@ static int commc_test_count = 0;
 /* use these macros to define a test case function */
 
 #define TEST_CASE(name) \
-    static void test_##name(void)
+    static void test_##name(void) {
 
-#define END_TEST /* serves as a syntactic marker */
+#define END_TEST \
+    }
 
 /* --- ASSERTION MACROS --- */
 /* use these macros within a TEST_CASE to validate conditions */
@@ -114,5 +115,57 @@ static int commc_test_count = 0;
     } while (0)
 
 #define ASSERT_FALSE(condition) ASSERT_TRUE(!(condition))
+
+#define ASSERT_INT_EQUALS(expected, actual) \
+    do { \
+        int e = (expected); \
+        int a = (actual); \
+        commc_tests_total++; \
+        if (e == a) { \
+            printf("  [PASS] %s:%d: %d == %d\n", __FILE__, __LINE__, e, a); \
+            commc_tests_passed++; \
+        } else { \
+            printf("  [FAIL] %s:%d: expected %d, but got %d\n", __FILE__, __LINE__, e, a); \
+            commc_tests_failed++; \
+        } \
+    } while (0)
+
+#define ASSERT_STRING_EQUALS(expected, actual) \
+    do { \
+        const char* e = (expected); \
+        const char* a = (actual); \
+        commc_tests_total++; \
+        if (strcmp(e, a) == 0) { \
+            printf("  [PASS] %s:%d: \"%s\" == \"%s\"\n", __FILE__, __LINE__, e, a); \
+            commc_tests_passed++; \
+        } else { \
+            printf("  [FAIL] %s:%d: expected \"%s\", but got \"%s\"\n", __FILE__, __LINE__, e, a); \
+            commc_tests_failed++; \
+        } \
+    } while (0)
+
+#define ASSERT_NULL(pointer) \
+    do { \
+        commc_tests_total++; \
+        if ((pointer) == NULL) { \
+            printf("  [PASS] %s:%d: %s is NULL\n", __FILE__, __LINE__, #pointer); \
+            commc_tests_passed++; \
+        } else { \
+            printf("  [FAIL] %s:%d: %s is not NULL\n", __FILE__, __LINE__, #pointer); \
+            commc_tests_failed++; \
+        } \
+    } while (0)
+
+#define ASSERT_NOT_NULL(pointer) \
+    do { \
+        commc_tests_total++; \
+        if ((pointer) != NULL) { \
+            printf("  [PASS] %s:%d: %s is not NULL\n", __FILE__, __LINE__, #pointer); \
+            commc_tests_passed++; \
+        } else { \
+            printf("  [FAIL] %s:%d: %s is NULL\n", __FILE__, __LINE__, #pointer); \
+            commc_tests_failed++; \
+        } \
+    } while (0)
 
 #endif /* COMMC_TEST_HARNESS_H */
