@@ -14,8 +14,6 @@ COMMON-C encompasses (at present time):
 
 ### Core Systems
 
-
-
 - **Error handling** and **memory management**
   - **Error handling**: detect and represent abnormal conditions using return codes, error values, or status flags; propagate errors to the caller; provide *deterministic cleanup* and clear error reporting.
   - **Memory management**: allocate and free heap memory (*e.g.*, `malloc`/`free`), track ownership and lifetimes, avoid leaks and double-free, and manage fragmentation. Also covers stack vs heap allocation and strategies like *pooling* or *reference counting*.
@@ -129,4 +127,4 @@ This project is licensed under:
 You may choose to use this software under the terms of any/all license(s).
 ```
 
-[![Hippocratic License HL3-CORE](https://img.shields.io/static/v1?label=Hippocratic%20License&message=HL3-CORE&labelColor=5e2751&color=bc8c3d)](https://firstdonoharm.dev/version/3/0/core.html)
+[![Hippocratic License HL3-FULL](https://img.shields.io/static/v1?label=Hippocratic%20License&message=HL3-FULL&labelColor=5e2751&color=bc8c3d)](https://firstdonoharm.dev/version/3/0/full.html)
