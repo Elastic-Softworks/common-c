@@ -1,6 +1,6 @@
 # COMMON-C *(commc)*
 
-![COMMC logo](dev/commc.png)
+![COMMC logo](docs/img/commc.png)
 
 ## Overview
 
