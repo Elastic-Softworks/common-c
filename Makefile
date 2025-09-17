@@ -91,39 +91,41 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 
 $(LIBRARY): $(OBJECTS)
 	ar rcs $@ $^
-	@echo "Library created: $(LIBRARY)"
+	@echo "LIB CREATED: $(LIBRARY)"
 
 # test compilation (compile-only check)
 
 test-compile: $(OBJECTS)
-	@echo "All source files compiled successfully!"
+	@echo "ALL TEST FILES COMPILED SUCCESSFULLY!"
 
 # testing framework
-
-TEST_SOURCES := $(wildcard $(TEST_DIR)/test_*.c)
-TEST_EXECUTABLES := $(TEST_SOURCES:$(TEST_DIR)/%.c=$(BUILD_DIR)/%)
-
-test: $(LIBRARY) $(TEST_EXECUTABLES)
+ 
+ TEST_SOURCES := $(wildcard $(TEST_DIR)/test_*.c)
+ TEST_EXECUTABLES := $(TEST_SOURCES:$(TEST_DIR)/%.c=$(BUILD_DIR)/%)
+ 
+ test: $(LIBRARY) $(TEST_EXECUTABLES)
 	@echo "RUNNING TESTS..."
 	@for test_exe in $(TEST_EXECUTABLES); do \
 		./$$test_exe; \
 	done
-
-$(BUILD_DIR)/%: $(TEST_DIR)/%.c
+ 
+ $(BUILD_DIR)/%: $(TEST_DIR)/%.c
 	$(CC) $(CFLAGS) $< -o $@ $(LIBRARY)
-
-# clean build artifacts
+ 
+ # clean build artifacts
 
 clean:
 	rm -rf $(BUILD_DIR)
 	rm -f $(SRC_DIR)/*.o
 
+
 # install headers and library (basic)
 
 install: $(LIBRARY)
-	@echo "Install target not yet implemented"
+	@echo "INSTALL TARGET NOT YET ELIMINATED"
 
 # check for common issues
+
 check:
 	@echo "CHECKING FOR COMMON ISSUES..."
 	@find . -name "*.o" -not -path "./$(BUILD_DIR)/*" && echo "FOUND STRAY OBJECT FILES!" || echo "NO STRAY OBJECT FILES FOUND."
@@ -136,6 +138,7 @@ check:
 rebuild: clean all
 
 # help
+
 help:
 	@echo "COMMC BUILD SYSTEM"
 	@echo "AVAILABLE TARGETS:"
