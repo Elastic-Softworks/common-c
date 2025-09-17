@@ -54,9 +54,16 @@ typedef enum {
 	==================================
 */
 
-/* opaque socket handle. */
+/* platform-specific socket handle. */
 
+#ifdef _WIN32
+#include <winsock2.h>
+typedef SOCKET commc_socket_t;
+#define COMMC_INVALID_SOCKET INVALID_SOCKET
+#else
 typedef int commc_socket_t;
+#define COMMC_INVALID_SOCKET -1
+#endif
 
 /*
 	==================================

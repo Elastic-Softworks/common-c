@@ -32,9 +32,9 @@
 	==================================
 */
 
-/* internal node structure. */
+/* internal node structure definition */
 
-typedef struct commc_tree_node_t {
+struct commc_tree_node_t {
 
   void*  key;                             /* key for comparison */
   void*  value;                           /* user-provided data */
@@ -42,7 +42,7 @@ typedef struct commc_tree_node_t {
   struct commc_tree_node_t*  left;        /* left child */
   struct commc_tree_node_t*  right;       /* right child */
 
-} commc_tree_node_t;
+};
 
 /* internal tree structure. */
 
@@ -226,7 +226,8 @@ static commc_tree_node_t* commc_tree_remove_recursive(commc_tree_node_t* node,
                                                       const void* key,
                                                       commc_tree_compare_func compare_func) {
 
-  int cmp;
+  int                 cmp;
+  commc_tree_node_t*  temp; /* C89 compliance: declare all variables at top */
 
   if  (!node) {
 
@@ -249,20 +250,20 @@ static commc_tree_node_t* commc_tree_remove_recursive(commc_tree_node_t* node,
     /* node to be deleted found */
     if  (node->left == NULL) {
 
-      commc_tree_node_t* temp = node->right;
+      temp = node->right;
       free(node);
       return temp;
 
     } else if  (node->right == NULL) {
 
-      commc_tree_node_t* temp = node->left;
+      temp = node->left;
       free(node);
       return temp;
 
     }
 
     /* node with two children: get inorder successor */
-    commc_tree_node_t* temp = commc_tree_min_node(node->right);
+    temp = commc_tree_min_node(node->right);
 
     node->key   = temp->key;
     node->value = temp->value;

@@ -24,6 +24,7 @@
 
 #include <stdlib.h>                /* for rand, srand */
 #include <time.h>                  /* for time */
+#include <string.h>                /* for memset */
 
 #include "commc/math.h"            /* take a guess */
 #include "commc/error.h"           /* for error handling */

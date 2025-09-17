@@ -40,6 +40,7 @@
 
 typedef struct {
 
+  int placeholder; /* C89 compliance: structs cannot be empty */
   /* platform-specific input handles would go here */
   /* e.g., window handle, event queue, etc. */
 
@@ -51,30 +52,10 @@ typedef struct {
 	==================================
 */
 
-/*
-
-         get_key_from_code()
-	       ---
-	       maps a platform-specific key code to a
-	       commc_key_code_t. (conceptual)
-
-*/
-
-static commc_key_code_t get_key_from_code(int platform_code) {
-
-  /* conceptual mapping */
-
-  if  (platform_code >= 'a' && platform_code <= 'z') {
-
-    return (commc_key_code_t)('A' + (platform_code - 'a'));
-
-  }
-
-  /* add more mappings for numbers, symbols, special keys */
-
-  return COMMC_KEY_UNKNOWN;
-
-}
+/* NOTE: get_key_from_code() helper function removed due to unused function
+   warning. in a complete implementation, this would be used by keyboard
+   polling functions to map platform-specific key codes to commc_key_code_t
+   values. */
 
 /*
 	==================================

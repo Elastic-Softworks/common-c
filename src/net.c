@@ -35,7 +35,10 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>      /* for getaddrinfo */
 
+/* pragma comment only supported by MSVC, not GCC on Windows */
+#ifdef _MSC_VER
 #pragma comment(lib, "ws2_32.lib")
+#endif
 
 #else
 
@@ -45,7 +48,6 @@
 #include <netdb.h>         /* for getaddrinfo */
 #include <unistd.h>        /* for close */
 
-#define INVALID_SOCKET -1
 #define SOCKET_ERROR   -1
 #endif
 
@@ -135,7 +137,7 @@ void commc_net_shutdown(void) {
 
 commc_socket_t commc_net_socket_create(commc_net_type_t type) {
 
-  commc_socket_t sock = INVALID_SOCKET;
+  commc_socket_t sock = COMMC_INVALID_SOCKET;
 
   int  protocol;
   int  sock_type;
@@ -153,13 +155,13 @@ commc_socket_t commc_net_socket_create(commc_net_type_t type) {
   } else {
 
     commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
-    return INVALID_SOCKET;
+    return COMMC_INVALID_SOCKET;
 
   }
 
   sock = (commc_socket_t)socket(AF_INET, sock_type, protocol);
 
-  if  (sock == INVALID_SOCKET) {
+  if  (sock == COMMC_INVALID_SOCKET) {
 
     commc_report_error(COMMC_SYSTEM_ERROR, __FILE__, __LINE__);
 
@@ -179,7 +181,7 @@ commc_socket_t commc_net_socket_create(commc_net_type_t type) {
 
 void commc_net_socket_close(commc_socket_t sock) {
 
-  if  (sock != INVALID_SOCKET) {
+  if  (sock != COMMC_INVALID_SOCKET) {
 #ifdef _WIN32
     closesocket(sock);
 #else
@@ -248,7 +250,7 @@ commc_socket_t commc_net_accept(commc_socket_t listen_sock) {
   
   client_sock = (commc_socket_t)accept(listen_sock, NULL, NULL);
 
-  if  (client_sock == INVALID_SOCKET) {
+  if  (client_sock == COMMC_INVALID_SOCKET) {
     commc_report_error(COMMC_SYSTEM_ERROR, __FILE__, __LINE__);
   }
 

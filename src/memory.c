@@ -40,14 +40,16 @@ typedef struct commc_memory_block_t {
 
 } commc_memory_block_t;
 
-typedef struct commc_memory_pool_t {
+/* internal definition of memory pool structure */
+
+struct commc_memory_pool_t {
 
   commc_memory_block_t*           free_blocks;    /* freelist head */
   size_t                          block_size;     /* size of each block */
   size_t                          total_size;     /* total buffer size */
   unsigned char*                  buffer;         /* large allocation */
 
-} commc_memory_pool_t;
+};
 
 /*
 	==================================
@@ -66,7 +68,10 @@ typedef struct commc_memory_pool_t {
 
 commc_memory_pool_t* commc_memory_pool_create(size_t block_size, size_t block_count) {
 
-  commc_memory_pool_t* pool;
+  commc_memory_pool_t*  pool;
+  unsigned char*        current;  /* C89 compliance: declare all variables at top */
+  size_t                i;
+  commc_memory_block_t* node;
 
   pool = (commc_memory_pool_t*) malloc(sizeof(commc_memory_pool_t));
 
@@ -91,11 +96,10 @@ commc_memory_pool_t* commc_memory_pool_create(size_t block_size, size_t block_co
 
   /* init freelist */
 
-  unsigned char* current = pool->buffer;
+  current = pool->buffer;
 
-  for  (size_t i = 0; i < block_count; i++) {
+  for  (i = 0; i < block_count; i++) {
 
-    commc_memory_block_t* node;
     node = (commc_memory_block_t*) malloc(sizeof(commc_memory_block_t));
 
     if  (!node) {
@@ -129,13 +133,15 @@ commc_memory_pool_t* commc_memory_pool_create(size_t block_size, size_t block_co
 
 void* commc_memory_pool_alloc(commc_memory_pool_t* pool) {
 
+  commc_memory_block_t* block; /* C89 compliance: declare variables at top */
+
   if  (!pool->free_blocks) {
 
     return NULL;
 
   }
 
-  commc_memory_block_t* block = pool->free_blocks;
+  block = pool->free_blocks;
   pool->free_blocks = block->next;
 
   return block->address;
@@ -177,17 +183,20 @@ void commc_memory_pool_free(commc_memory_pool_t* pool, void* block) {
 
 void commc_memory_pool_destroy(commc_memory_pool_t* pool) {
 
+  commc_memory_block_t* current; /* C89 compliance: declare variables at top */
+  commc_memory_block_t* next;
+
   if  (!pool) {
 
     return;
 
   }
 
-  commc_memory_block_t* current = pool->free_blocks;
+  current = pool->free_blocks;
 
   while  (current) {
 
-    commc_memory_block_t* next = current->next;
+    next = current->next;
     free(current);
     current = next;
 

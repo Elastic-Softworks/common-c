@@ -65,13 +65,15 @@ struct commc_graphics_context_t {
 
 static void set_pixel_internal(commc_bitmap_t* bitmap, int x, int y, commc_color_t color) {
 
+  size_t index; /* C89 compliance: declare variables at top of function */
+
   if  (!bitmap || !bitmap->pixels || x < 0 || y < 0 || x >= bitmap->width || y >= bitmap->height) {
 
     return;
 
   }
 
-  size_t index = (y * bitmap->width + x) * 4; /* 4 bytes per pixel (RGBA) */
+  index = (y * bitmap->width + x) * 4; /* 4 bytes per pixel (RGBA) */
   
   bitmap->pixels[index + 0] = color.r;
   bitmap->pixels[index + 1] = color.g;
@@ -480,6 +482,7 @@ void commc_bitmap_set_pixel(commc_bitmap_t* bitmap, int x, int y, commc_color_t 
 commc_color_t commc_bitmap_get_pixel(const commc_bitmap_t* bitmap, int x, int y) {
 
   commc_color_t default_color = {0, 0, 0, 0}; /* black transparent */
+  size_t        index;                        /* C89 compliance: declare variables at top */
 
   if  (!bitmap || !bitmap->pixels || x < 0 || y < 0 || x >= bitmap->width || y >= bitmap->height) {
 
@@ -488,7 +491,7 @@ commc_color_t commc_bitmap_get_pixel(const commc_bitmap_t* bitmap, int x, int y)
 
   }
 
-  size_t index = (y * bitmap->width + x) * 4;
+  index = (y * bitmap->width + x) * 4;
   
   default_color.r = bitmap->pixels[index + 0];
   default_color.g = bitmap->pixels[index + 1];

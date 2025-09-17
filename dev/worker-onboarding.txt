@@ -22,6 +22,15 @@ COMMENTARY:
       explained. Make sure that all educational language assumes the user is new to programming,
       but do not condescend: Opt to thoroughly explain all systems as they are, mathematical
       operations.
+    - Do not change formatting of original comments if appending or rewriting comments.
+
+OUTPUT:
+
+    - All echo calls and print statements should read and be formatted like the following:
+
+        "OUTPUT: BUILDING OUTPUT..."
+        "OUTPUT: SUCCESSFUL OUTPUT...!"
+        "OUTPUT" FAILED OUTPUT...!
 
 Thank you, and good luck.
 

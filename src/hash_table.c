@@ -325,7 +325,6 @@ void commc_hash_table_remove(commc_hash_table_t* table, const char* key) {
   size_t              bucket_index;
   commc_list_node_t*  current_node;
   commc_hash_entry_t* entry;
-  int                 found = 0;
 
   if  (!table || !key) {
 
@@ -363,7 +362,6 @@ void commc_hash_table_remove(commc_hash_table_t* table, const char* key) {
       free(entry);
       free(current_node); /* free the list node itself */
       table->size--;
-      found = 1;
       break;
 
     }
