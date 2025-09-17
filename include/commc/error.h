@@ -94,7 +94,7 @@ void commc_report_error(commc_error_t error, const char* file, int line);
 /* macro wrapper for assertions with file/line info. */
 
 #define COMMC_ASSERT(condition, msg) \
-  if (!commc_assert((condition), (msg))) { \
+  if (commc_assert((condition), (msg)) != COMMC_SUCCESS) { \
     commc_report_error(COMMC_FAILURE, __FILE__, __LINE__); \
   }
 

@@ -42,11 +42,11 @@ TEST_CASE(args_add_flag)
 
     /* add a flag: -v, --verbose */
 
-    ASSERT_TRUE(commc_args_add_flag(parser, "-v", "--verbose", "Enable verbose output") == 0);
+    ASSERT_TRUE(commc_args_add_flag(parser, "v", "verbose", "Enable verbose output") == 1);
 
     /* add another flag: -h, --help */
 
-    ASSERT_TRUE(commc_args_add_flag(parser, "-h", "--help", "Show help message") == 0);
+    ASSERT_TRUE(commc_args_add_flag(parser, "h", "help", "Show help message") == 1);
 
     commc_args_parser_destroy(parser);
 
@@ -62,7 +62,7 @@ TEST_CASE(args_add_option)
 
     /* add an option: -o, --output with a default value */
 
-    ASSERT_TRUE(commc_args_add_option(parser, "-o", "--output", "Output file", "default.txt") == 0);
+    ASSERT_TRUE(commc_args_add_option(parser, "o", "output", "Output file", "default.txt") == 1);
 
     commc_args_parser_destroy(parser);
 
@@ -78,7 +78,7 @@ TEST_CASE(args_add_positional)
 
     /* add a positional argument: input_file */
 
-    ASSERT_TRUE(commc_args_add_positional(parser, "input_file", "Input file path") == 0);
+    ASSERT_TRUE(commc_args_add_positional(parser, "input_file", "Input file path") == 1);
 
     commc_args_parser_destroy(parser);
 
@@ -97,10 +97,10 @@ TEST_CASE(args_parse_simple)
 
     /* add a flag and an option */
 
-    ASSERT_TRUE(commc_args_add_flag(parser, "-v", "--verbose", "Enable verbose output") == 0);
-    ASSERT_TRUE(commc_args_add_option(parser, "-o", "--output", "Output file", "default.txt") == 0);
-    ASSERT_TRUE(commc_args_add_positional(parser, "input_file", "Input file path") == 0);
-    ASSERT_TRUE(commc_args_add_positional(parser, "config_file", "Configuration file path") == 0);
+    ASSERT_TRUE(commc_args_add_flag(parser, "v", "verbose", "Enable verbose output") == 1);
+    ASSERT_TRUE(commc_args_add_option(parser, "o", "output", "Output file", "default.txt") == 1);
+    ASSERT_TRUE(commc_args_add_positional(parser, "input_file", "Input file path") == 1);
+    ASSERT_TRUE(commc_args_add_positional(parser, "config_file", "Configuration file path") == 1);
 
     /* parse the arguments */
 
@@ -128,7 +128,7 @@ TEST_CASE(args_get_flag_present)
     
     parser = commc_args_parser_create();
     ASSERT_NOT_NULL(parser);
-    ASSERT_TRUE(commc_args_add_flag(parser, "-f", "--flag", "A test flag") == 0);
+    ASSERT_TRUE(commc_args_add_flag(parser, "f", "flag", "A test flag") == 1);
     ASSERT_TRUE(commc_args_parse(parser, argc, argv) == 1);
     ASSERT_TRUE(commc_args_get_flag(parser, "flag") == 1);
     ASSERT_TRUE(commc_args_get_flag(parser, "f") == 1); /* Test short name */
@@ -146,7 +146,7 @@ TEST_CASE(args_get_flag_absent)
     
     parser = commc_args_parser_create();
     ASSERT_NOT_NULL(parser);
-    ASSERT_TRUE(commc_args_add_flag(parser, "-f", "--flag", "A test flag") == 0);
+    ASSERT_TRUE(commc_args_add_flag(parser, "f", "flag", "A test flag") == 1);
     ASSERT_TRUE(commc_args_parse(parser, argc, argv) == 1);
     ASSERT_TRUE(commc_args_get_flag(parser, "flag") == 0);
     ASSERT_TRUE(commc_args_get_flag(parser, "f") == 0);
@@ -164,7 +164,7 @@ TEST_CASE(args_get_option_value)
     
     parser = commc_args_parser_create();
     ASSERT_NOT_NULL(parser);
-    ASSERT_TRUE(commc_args_add_option(parser, "-o", "--output", "Output file", "default.txt") == 0);
+    ASSERT_TRUE(commc_args_add_option(parser, "o", "output", "Output file", "default.txt") == 1);
     ASSERT_TRUE(commc_args_parse(parser, argc, argv) == 1);
     ASSERT_STRING_EQUALS(commc_args_get_option(parser, "output"), "custom.log");
     ASSERT_STRING_EQUALS(commc_args_get_option(parser, "o"), "custom.log"); /* Test short name */
@@ -182,7 +182,7 @@ TEST_CASE(args_get_option_default)
     
     parser = commc_args_parser_create();
     ASSERT_NOT_NULL(parser);
-    ASSERT_TRUE(commc_args_add_option(parser, "-o", "--output", "Output file", "default.txt") == 0);
+    ASSERT_TRUE(commc_args_add_option(parser, "o", "output", "Output file", "default.txt") == 1);
     ASSERT_TRUE(commc_args_parse(parser, argc, argv) == 1);
     ASSERT_STRING_EQUALS(commc_args_get_option(parser, "output"), "default.txt");
     commc_args_parser_destroy(parser);
@@ -199,8 +199,8 @@ TEST_CASE(args_get_positional_valid)
     
     parser = commc_args_parser_create();
     ASSERT_NOT_NULL(parser);
-    ASSERT_TRUE(commc_args_add_positional(parser, "file1", "First input file") == 0);
-    ASSERT_TRUE(commc_args_add_positional(parser, "file2", "Second input file") == 0);
+    ASSERT_TRUE(commc_args_add_positional(parser, "file1", "First input file") == 1);
+    ASSERT_TRUE(commc_args_add_positional(parser, "file2", "Second input file") == 1);
     ASSERT_TRUE(commc_args_parse(parser, argc, argv) == 1);
     ASSERT_STRING_EQUALS(commc_args_get_positional(parser, 0), "input1.txt");
     ASSERT_STRING_EQUALS(commc_args_get_positional(parser, 1), "input2.txt");
@@ -218,7 +218,7 @@ TEST_CASE(args_get_positional_invalid)
     
     parser = commc_args_parser_create();
     ASSERT_NOT_NULL(parser);
-    ASSERT_TRUE(commc_args_add_positional(parser, "file1", "First input file") == 0);
+    ASSERT_TRUE(commc_args_add_positional(parser, "file1", "First input file") == 1);
     ASSERT_TRUE(commc_args_parse(parser, argc, argv) == 1);
     ASSERT_NULL(commc_args_get_positional(parser, 1)); /* Index out of bounds */
     commc_args_parser_destroy(parser);
