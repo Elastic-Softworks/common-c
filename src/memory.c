@@ -33,18 +33,11 @@
 
 /* internal pool structure. */
 
-typedef struct commc_memory_block_t {
-
-  void*                           address;   /* pointer to block */
-  struct commc_memory_block_t*    next;      /* next free block */
-
-} commc_memory_block_t;
-
 /* internal definition of memory pool structure */
 
 struct commc_memory_pool_t {
 
-  commc_memory_block_t*           free_blocks;    /* freelist head */
+  void**                          free_blocks;    /* intrusive freelist head */
   size_t                          block_size;     /* size of each block */
   size_t                          total_size;     /* total buffer size */
   unsigned char*                  buffer;         /* large allocation */
@@ -71,7 +64,14 @@ commc_memory_pool_t* commc_memory_pool_create(size_t block_size, size_t block_co
   commc_memory_pool_t*  pool;
   unsigned char*        current;  /* C89 compliance: declare all variables at top */
   size_t                i;
-  commc_memory_block_t* node;
+
+  /* ensure block size is at least sizeof(void*) for intrusive freelist */
+
+  if  (block_size < sizeof(void*)) {
+
+    block_size = sizeof(void*);
+
+  }
 
   pool = (commc_memory_pool_t*) malloc(sizeof(commc_memory_pool_t));
 
@@ -94,27 +94,14 @@ commc_memory_pool_t* commc_memory_pool_create(size_t block_size, size_t block_co
 
   pool->free_blocks = NULL;
 
-  /* init freelist */
+  /* init intrusive freelist - each block points to next */
 
   current = pool->buffer;
 
   for  (i = 0; i < block_count; i++) {
 
-    node = (commc_memory_block_t*) malloc(sizeof(commc_memory_block_t));
-
-    if  (!node) {
-
-      /* cleanup partial init */
-
-      free(pool->buffer);
-      free(pool);
-      return NULL;
-
-    }
-
-    node->address = current;
-    node->next    = pool->free_blocks;
-    pool->free_blocks = node;
+    *((void**)current) = pool->free_blocks;  /* store next pointer in block */
+    pool->free_blocks = (void**)current;     /* update freelist head */
     current += block_size;
 
   }
@@ -133,7 +120,13 @@ commc_memory_pool_t* commc_memory_pool_create(size_t block_size, size_t block_co
 
 void* commc_memory_pool_alloc(commc_memory_pool_t* pool) {
 
-  commc_memory_block_t* block; /* C89 compliance: declare variables at top */
+  void** block; /* C89 compliance: declare variables at top */
+
+  if  (!pool) {
+
+    return NULL;
+
+  }
 
   if  (!pool->free_blocks) {
 
@@ -142,9 +135,9 @@ void* commc_memory_pool_alloc(commc_memory_pool_t* pool) {
   }
 
   block = pool->free_blocks;
-  pool->free_blocks = block->next;
+  pool->free_blocks = (void**)*pool->free_blocks;  /* update freelist to next block */
 
-  return block->address;
+  return (void*)block;
 
 }
 
@@ -159,17 +152,16 @@ void* commc_memory_pool_alloc(commc_memory_pool_t* pool) {
 
 void commc_memory_pool_free(commc_memory_pool_t* pool, void* block) {
 
-  commc_memory_block_t* node;
-  node = (commc_memory_block_t*) malloc(sizeof(commc_memory_block_t));
+  if  (!pool || !block) {
 
-  if  (node) {
-
-    node->address = block;
-    node->next    = pool->free_blocks;
-    pool->free_blocks = node;
+    return; /* handle null parameters gracefully */
 
   }
-  /* if alloc fails, silently leak or handle differently. */
+
+  /* add block back to intrusive freelist */
+
+  *((void**)block) = pool->free_blocks;  /* store current head in block */
+  pool->free_blocks = (void**)block;     /* block becomes new head */
 
 }
 
@@ -183,24 +175,13 @@ void commc_memory_pool_free(commc_memory_pool_t* pool, void* block) {
 
 void commc_memory_pool_destroy(commc_memory_pool_t* pool) {
 
-  commc_memory_block_t* current; /* C89 compliance: declare variables at top */
-  commc_memory_block_t* next;
-
   if  (!pool) {
 
     return;
 
   }
 
-  current = pool->free_blocks;
-
-  while  (current) {
-
-    next = current->next;
-    free(current);
-    current = next;
-
-  }
+  /* no need to free individual freelist nodes - they're intrusive */
 
   free(pool->buffer);
   free(pool);
