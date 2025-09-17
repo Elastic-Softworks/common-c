@@ -176,7 +176,9 @@ char* commc_file_read_all_text(const char* path) {
 
   }
 
-  buffer = (char*)malloc(file_size + 1); /* +1 for null terminator */
+  /* allocate buffer large enough for worst case (no conversion) plus null terminator */
+  
+  buffer = (char*)malloc(file_size + 1);
 
   if  (!buffer) {
 
@@ -187,17 +189,11 @@ char* commc_file_read_all_text(const char* path) {
   }
 
   read_count = fread(buffer, 1, file_size, file);
+  
+  /* on Windows text mode, read_count may be less than file_size due to CRLF->LF conversion */
+  /* this is normal behavior, not an error */
 
-  if  (read_count != (size_t)file_size) {
-
-    commc_report_error(COMMC_IO_ERROR, __FILE__, __LINE__);
-    free(buffer);
-    fclose(file);
-    return NULL;
-
-  }
-
-  buffer[file_size] = '\0'; /* null-terminate the string */
+  buffer[read_count] = '\0'; /* null-terminate the string */
   fclose(file);
 
   return buffer;
