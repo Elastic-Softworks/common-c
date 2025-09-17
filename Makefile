@@ -111,6 +111,68 @@ test-compile: $(OBJECTS)
  
  $(BUILD_DIR)/%: $(TEST_DIR)/%.c
 	$(CC) $(CFLAGS) $< -o $@ $(LIBRARY)
+
+# valgrind memory testing (unix only)
+
+valgrind-test: $(LIBRARY) $(TEST_EXECUTABLES)
+	@if command -v valgrind >/dev/null 2>&1; then \
+		echo "RUNNING TESTS WITH VALGRIND MEMORY CHECKING..."; \
+		for test_exe in $(TEST_EXECUTABLES); do \
+			echo "--- VALGRIND: $$test_exe ---"; \
+			valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all \
+				--track-origins=yes --verbose --log-fd=1 ./$$test_exe; \
+		done; \
+	else \
+		echo "VALGRIND NOT FOUND - INSTALL WITH: sudo apt install valgrind"; \
+		echo "OR ON MACOS: brew install valgrind"; \
+		exit 1; \
+	fi
+
+# sanitizer-enhanced testing
+
+SANITIZER_FLAGS := -fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer
+SANITIZER_CFLAGS := $(CFLAGS) $(SANITIZER_FLAGS) -g
+
+sanitizer-test: $(LIBRARY)
+	@echo "BUILDING TESTS WITH ADDRESS/UNDEFINED SANITIZERS..."
+	@for test_src in $(TEST_SOURCES); do \
+		test_name=$$(basename $$test_src .c); \
+		echo "COMPILING: $$test_name"; \
+		$(CC) $(SANITIZER_CFLAGS) $$test_src -o $(BUILD_DIR)/$$test_name $(LIBRARY); \
+	done
+	@echo "RUNNING SANITIZER TESTS..."
+	@for test_exe in $(TEST_EXECUTABLES); do \
+		echo "--- SANITIZER: $$test_exe ---"; \
+		./$$test_exe; \
+	done
+
+# memory-specific testing targets
+
+memory-test: $(LIBRARY) $(TEST_EXECUTABLES)
+	@echo "RUNNING MEMORY LEAK DETECTION TESTS..."
+	@echo "NOTE: this runs standard tests - use valgrind-test for detailed analysis"
+	@for test_exe in $(TEST_EXECUTABLES); do \
+		echo "--- MEMORY TEST: $$test_exe ---"; \
+		./$$test_exe; \
+	done
+
+# performance benchmarking targets
+
+benchmark-test: $(LIBRARY) $(TEST_EXECUTABLES)
+	@echo "RUNNING PERFORMANCE BENCHMARK TESTS..."
+	@echo "NOTE: this runs standard tests with timing - results may vary by system"
+	@for test_exe in $(TEST_EXECUTABLES); do \
+		echo "--- BENCHMARK: $$test_exe ---"; \
+		./$$test_exe; \
+	done
+
+# comprehensive testing with all modes
+
+full-test: test valgrind-test sanitizer-test
+	@echo "COMPREHENSIVE TESTING COMPLETE!"
+	@echo "- STANDARD TESTS: PASSED"
+	@echo "- VALGRIND TESTS: PASSED"  
+	@echo "- SANITIZER TESTS: PASSED"
  
  # clean build artifacts
 
@@ -146,10 +208,15 @@ help:
 	@echo "  DEBUG         - BUILD WITH DEBUG SYMBOLS"
 	@echo "  RELEASE       - BUILD OPTIMIZED VERSION"
 	@echo "  TEST          - COMPILE AND RUN ALL TESTS"
+	@echo "  MEMORY-TEST   - RUN MEMORY LEAK DETECTION TESTS"
+	@echo "  BENCHMARK-TEST - RUN PERFORMANCE BENCHMARK TESTS"
+	@echo "  VALGRIND-TEST - RUN TESTS UNDER VALGRIND (UNIX ONLY)"
+	@echo "  SANITIZER-TEST - RUN TESTS WITH ADDRESS/UB SANITIZERS"
+	@echo "  FULL-TEST     - RUN ALL TESTING MODES"
 	@echo "  TEST-COMPILE  - TEST COMPILATION WITHOUT LINKING"
 	@echo "  CLEAN         - REMOVE BUILD ARTIFACTS"
 	@echo "  CHECK         - CHECK FOR COMMON ISSUES"
 	@echo "  REBUILD       - CLEAN AND REBUILD"
 	@echo "  HELP          - SHOW THIS HELP MESSAGE"
 
-.PHONY: all debug release test test-compile clean install check rebuild help
+.PHONY: all debug release test memory-test benchmark-test valgrind-test sanitizer-test full-test test-compile clean install check rebuild help

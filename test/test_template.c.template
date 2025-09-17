@@ -1,0 +1,182 @@
+/* ============================================================================
+ *  COMMON-C TEST TEMPLATE
+ *  EXAMPLE MODULE TEST FILE
+ *  ELASTIC SOFTWORKS 2025
+ *
+ *  this file serves as a template for creating new test suites for the
+ *  modules in the COMMON-C library. it demonstrates the basic structure,
+ *  including how to include the test harness, define test cases, and
+ *  use the assertion macros, memory leak detection, and performance
+ *  benchmarking features.
+ *
+ *  INSTRUCTIONS:
+ *  1.  copy this file to a new file named `test_MODULENAME.c`.
+ *  2.  replace "template" in the test case names with the module name.
+ *  3.  include the header for the module you are testing.
+ *  4.  add your test cases, using the existing ones as a guide.
+ *  5.  add the new test file to the makefile's test target.
+ * ========================================================================= */
+
+#include "test_harness.h"
+#include <stdlib.h>  /* for malloc, free when testing memory management */
+
+/* #include "commc/your_module.h" */
+
+/* --- TEST CASES --- */
+
+TEST_CASE(template_example_success)
+
+    /* this is an example of a test that should pass */
+
+    int a = 5;
+    int b = 5;
+    ASSERT_TRUE(a == b);
+    ASSERT_INT_EQUALS(5, a);
+    ASSERT_STRING_EQUALS("hello", "hello");
+    ASSERT_NOT_NULL(&a);
+
+END_TEST
+
+TEST_CASE(template_example_failure)
+
+    /* this is an example of a test that should fail */
+
+    int x = 10;
+    int y = 12;
+    char* ptr = NULL;
+    ASSERT_INT_EQUALS(x, y);        /* this will fail */
+    ASSERT_FALSE(x < y);            /* this will fail */
+    ASSERT_NOT_NULL(ptr);           /* this will fail */
+
+END_TEST
+
+TEST_CASE(template_memory_leak_detection)
+
+    /* this demonstrates how to test for memory leaks in your code.
+       use this pattern when testing functions that allocate memory. */
+
+    void* test_ptr;
+
+    MEMORY_LEAK_CHECK_START();
+
+    /* allocate some memory (replace with your function under test) */
+    
+    test_ptr = malloc(100);
+    ASSERT_NOT_NULL(test_ptr);
+    
+    /* use the memory */
+    
+    memset(test_ptr, 0xAA, 100);
+    
+    /* properly free the memory */
+    
+    free(test_ptr);
+    
+    /* verify no leaks occurred */
+    
+    ASSERT_NO_MEMORY_LEAKS();
+    
+    MEMORY_LEAK_CHECK_END();
+
+END_TEST
+
+TEST_CASE(template_performance_benchmarking)
+
+    /* this demonstrates how to benchmark the performance of your code.
+       use this pattern when testing performance-critical functions. */
+       
+    int i;
+    int result = 0;
+
+    /* simple timing example */
+    
+    BENCHMARK_START("simple_computation");
+    
+    for  (i = 0; i < 10000; i++) {
+    
+        result += i % 7;
+        
+    }
+    
+    BENCHMARK_END("simple_computation");
+    
+    /* function call benchmarking (replace with your function) */
+    
+    BENCHMARK_FUNCTION(
+        result += (42 * 13) % 17,  /* replace this with your function call */
+        1000,                      /* number of iterations */
+        "example_function"         /* benchmark name */
+    );
+    
+    /* performance assertion example */
+    
+    ASSERT_PERFORMANCE_WITHIN("simple_computation", 5.0, 100);
+    
+    /* this asserts that "simple_computation" completed within 5ms ±100%
+       (i.e., between 0ms and 10ms). adjust values based on your requirements. */
+
+END_TEST
+
+TEST_CASE(template_combined_memory_and_performance)
+
+    /* this demonstrates combining memory leak detection with performance
+       benchmarking to ensure your code is both fast and leak-free. */
+       
+    void* buffers[10];
+    int   i;
+
+    MEMORY_LEAK_CHECK_START();
+    BENCHMARK_START("memory_operations");
+    
+    /* allocate multiple buffers */
+    
+    for  (i = 0; i < 10; i++) {
+    
+        buffers[i] = malloc(256);
+        ASSERT_NOT_NULL(buffers[i]);
+        memset(buffers[i], i, 256);
+        
+    }
+    
+    /* free all buffers */
+    
+    for  (i = 0; i < 10; i++) {
+    
+        free(buffers[i]);
+        
+    }
+    
+    BENCHMARK_END("memory_operations");
+    ASSERT_NO_MEMORY_LEAKS();
+    MEMORY_LEAK_CHECK_END();
+
+END_TEST
+
+/* --- TEST RUNNER --- */
+
+int main(void) {
+
+    PRINT_TEST_BANNER();
+
+    /* add all test cases to be run here */
+
+    ADD_TEST(template_example_success);
+    ADD_TEST(template_example_failure);
+    ADD_TEST(template_memory_leak_detection);
+    ADD_TEST(template_performance_benchmarking);
+    ADD_TEST(template_combined_memory_and_performance);
+
+    RUN_ALL_TESTS();
+    PRINT_TEST_SUMMARY();
+
+    /* return 1 if any tests failed, 0 otherwise */
+
+    return commc_tests_failed > 0 ? 1 : 0;
+
+}
+
+/*
+	==================================
+             --- EOF ---
+	==================================
+*/
