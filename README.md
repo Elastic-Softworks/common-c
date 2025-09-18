@@ -93,8 +93,6 @@ COMMON-C encompasses (at present time):
 
 ## Development
 
-This particular branch of COMMON-C is maintained by members of **Elastic Softworks**.
-
 All libraries adhere to:
 
 - C89/ANSI C standard compliance
@@ -107,10 +105,6 @@ All libraries adhere to:
 Libraries can be integrated individually or as a complete suite. Each component maintains its own documentation and examples within its respective directory.
 
 The modular design allows developers to include only needed functionality without carrying unnecessary overhead.
-
-## Contributing
-
-Contributions follow horizontal collaboration principles. Submit patches, improvements, or new libraries through available federation channels. All contributions must maintain C89 compliance and follow project formatting standards.
 
 ## Resources
 
