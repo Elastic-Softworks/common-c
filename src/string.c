@@ -23,6 +23,7 @@
 */
 
 #include "commc/string.h"
+#include "commc/error.h"
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -213,6 +214,7 @@ char* commc_string_trim(const char* str) {
 
   if  (!str) {
 
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
     return NULL;
 
   }
@@ -227,6 +229,14 @@ char* commc_string_trim(const char* str) {
   if  (*str == 0) { /* all spaces */
 
     trimmed_str = (char*)malloc(1);
+    
+    if  (!trimmed_str) {
+
+      commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
+      return NULL;
+
+    }
+    
     trimmed_str[0] = '\0';
     return trimmed_str;
 
@@ -248,6 +258,7 @@ char* commc_string_trim(const char* str) {
 
   if  (!trimmed_str) {
 
+    commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
     return NULL;
 
   }
@@ -280,6 +291,7 @@ char** commc_string_split(const char* str, const char* delimiter) {
 
   if  (!str) {
 
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
     return NULL;
 
   }
@@ -305,6 +317,7 @@ char** commc_string_split(const char* str, const char* delimiter) {
 
   if  (!result) {
 
+    commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
     return NULL;
 
   }

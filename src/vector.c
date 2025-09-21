@@ -22,10 +22,11 @@
 	==================================
 */
 
-#include <stdlib.h>
-#include <string.h>
+#include  <stdlib.h>
+#include  <string.h>
 
-#include "commc/vector.h"
+#include  "commc/vector.h"
+#include  "commc/error.h"
 
 /*
 	==================================
@@ -66,6 +67,7 @@ commc_vector_t* commc_vector_create(size_t initial_capacity, size_t element_size
 
   if  (!vector) {
 
+    commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
     return NULL;
 
   }
@@ -78,6 +80,7 @@ commc_vector_t* commc_vector_create(size_t initial_capacity, size_t element_size
   if  (!vector->data) {
 
     free(vector);
+    commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
     return NULL;
 
   }
@@ -201,7 +204,7 @@ void commc_vector_pop_back(commc_vector_t* vector) {
 
 */
 
-void* commc_vector_get(commc_vector_t* vector, size_t index) {
+void* commc_vector_get(const commc_vector_t* vector, size_t index) {
 
   if  (!vector || index >= vector->size) {
 
@@ -243,7 +246,7 @@ int commc_vector_set(commc_vector_t* vector, size_t index, const void* element) 
 
 */
 
-size_t commc_vector_size(commc_vector_t* vector) {
+size_t commc_vector_size(const commc_vector_t* vector) {
 
   return vector ? vector->size : 0;
 
@@ -257,7 +260,7 @@ size_t commc_vector_size(commc_vector_t* vector) {
 
 */
 
-size_t commc_vector_capacity(commc_vector_t* vector) {
+size_t commc_vector_capacity(const commc_vector_t* vector) {
 
   return vector ? vector->capacity : 0;
 
@@ -271,7 +274,7 @@ size_t commc_vector_capacity(commc_vector_t* vector) {
 
 */
 
-int commc_vector_is_empty(commc_vector_t* vector) {
+int commc_vector_is_empty(const commc_vector_t* vector) {
 
   return vector ? (vector->size == 0) : 1;
 
@@ -373,7 +376,7 @@ void commc_vector_erase(commc_vector_t* vector, size_t index) {
 
 */
 
-void* commc_vector_front(commc_vector_t* vector) {
+void* commc_vector_front(const commc_vector_t* vector) {
 
   return commc_vector_get(vector, 0);
 
@@ -387,7 +390,7 @@ void* commc_vector_front(commc_vector_t* vector) {
 
 */
 
-void* commc_vector_back(commc_vector_t* vector) {
+void* commc_vector_back(const commc_vector_t* vector) {
 
   if  (!vector || vector->size == 0) {
 
@@ -396,6 +399,167 @@ void* commc_vector_back(commc_vector_t* vector) {
   }
 
   return commc_vector_get(vector, vector->size - 1);
+
+}
+
+/*
+	==================================
+             --- ITERATORS ---
+	==================================
+*/
+
+/*
+
+         commc_vector_begin()
+	       ---
+	       initializes iterator to the first element of the vector.
+	       demonstrates index-based iteration patterns for
+	       contiguous memory structures like arrays.
+
+*/
+
+commc_vector_iterator_t commc_vector_begin(const commc_vector_t* vector) {
+
+  commc_vector_iterator_t iterator;
+
+  if  (!vector) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    iterator.vector = NULL;
+    iterator.index = 0;
+    return iterator;
+
+  }
+
+  iterator.vector = vector;
+  iterator.index = 0;
+
+  return iterator;
+
+}
+
+/*
+
+         commc_vector_next()
+	       ---
+	       advances iterator to the next element in the vector.
+	       uses array-style indexing which provides O(1)
+	       random access performance.
+
+*/
+
+int commc_vector_next(commc_vector_iterator_t* iterator) {
+
+  if  (!iterator || !iterator->vector) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return 0;
+
+  }
+
+  iterator->index++;
+  return iterator->index < iterator->vector->size;
+
+}
+
+/*
+
+         commc_vector_iterator_data()
+	       ---
+	       retrieves data from the current iterator position.
+	       leverages vector's get function for safe bounds
+	       checking and element access.
+
+*/
+
+void* commc_vector_iterator_data(commc_vector_iterator_t* iterator) {
+
+  if  (!iterator || !iterator->vector) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return NULL;
+
+  }
+
+  return commc_vector_get(iterator->vector, iterator->index);
+
+}
+
+/*
+	==================================
+             --- SEARCH ---
+	==================================
+*/
+
+/*
+
+         commc_vector_find()
+	       ---
+	       implements linear search through vector elements
+	       using configurable comparison function for flexibility.
+
+*/
+
+void* commc_vector_find(const commc_vector_t* vector, const void* element, commc_compare_func compare) {
+
+  size_t i;
+
+  if  (!vector || !element || !compare) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return NULL;
+
+  }
+
+  for  (i = 0; i < vector->size; i++) {
+
+    void* current = commc_vector_get(vector, i);
+
+    if  (current && compare(current, element) == 0) {
+
+      return current;
+
+    }
+
+  }
+
+  return NULL;
+
+}
+
+/*
+
+         commc_vector_find_index()
+	       ---
+	       returns zero-based index of matching element for
+	       subsequent access or modification operations.
+
+*/
+
+int commc_vector_find_index(const commc_vector_t* vector, const void* element, commc_compare_func compare) {
+
+  size_t i;
+
+  if  (!vector || !element || !compare) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return -1;
+
+  }
+
+  for  (i = 0; i < vector->size; i++) {
+
+    void* current = commc_vector_get(vector, i);
+
+    if  (current && compare(current, element) == 0) {
+
+      return (int)i;
+
+    }
+
+  }
+
+  return -1;
 
 }
 

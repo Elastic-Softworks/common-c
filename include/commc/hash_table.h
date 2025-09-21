@@ -29,6 +29,7 @@
 #define  COMMC_HASH_TABLE_H
 
 #include  <stddef.h> 			/* for size_t */
+#include  "error.h"             /* for commc_error_t */
 
 /*
 	==================================
@@ -72,10 +73,11 @@ void commc_hash_table_destroy(commc_hash_table_t* table);
 	       ---
 	       inserts a key-value pair into the hash table.
 	       if the key already exists, its value is updated.
+	       returns COMMC_SUCCESS on success, appropriate error code on failure.
 
 */
 
-int commc_hash_table_insert(commc_hash_table_t* table, const char* key, void* value);
+commc_error_t commc_hash_table_insert(commc_hash_table_t* table, const char* key, void* value);
 
 /*
 
@@ -107,6 +109,30 @@ void commc_hash_table_remove(commc_hash_table_t* table, const char* key);
 */
 
 size_t commc_hash_table_size(commc_hash_table_t* table);
+
+/*
+
+         commc_hash_table_capacity()
+	       ---
+	       returns the number of buckets in the hash table.
+	       this represents the internal capacity for distribution
+	       of elements across the hash table structure.
+
+*/
+
+size_t commc_hash_table_capacity(commc_hash_table_t* table);
+
+/*
+
+         commc_hash_table_clear()
+	       ---
+	       removes all elements from the hash table.
+	       the table remains valid and can be reused.
+	       does not deallocate the bucket array.
+
+*/
+
+void commc_hash_table_clear(commc_hash_table_t* table);
 
 #endif /* COMMC_HASH_TABLE_H */
 

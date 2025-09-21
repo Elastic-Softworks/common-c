@@ -32,6 +32,24 @@
 
 /*
 	==================================
+             --- TYPEDEFS ---
+	==================================
+*/
+
+/*
+
+         commc_compare_func
+	       ---
+	       standard comparison function interface used across
+	       all COMMON-C data structures. returns negative,
+	       zero, or positive for less-than, equal, greater-than.
+
+*/
+
+typedef int (*commc_compare_func)(const void* a, const void* b);
+
+/*
+	==================================
              --- STRUCTS ---
 	==================================
 */
@@ -39,6 +57,23 @@
 /* opaque vector structure. */
 
 typedef struct commc_vector_t commc_vector_t;
+
+/*
+
+         commc_vector_iterator_t
+	       ---
+	       iterator structure for traversing vector elements.
+	       provides safe, educational approach to array-like
+	       data structure iteration in C89-compliant code.
+
+*/
+
+typedef struct {
+
+  const commc_vector_t*  vector;      /* parent vector reference */
+  size_t                 index;       /* current element index */
+
+} commc_vector_iterator_t;
 
 /*
 	==================================
@@ -97,7 +132,7 @@ void commc_vector_pop_back(commc_vector_t* vector);
 
 */
 
-void* commc_vector_get(commc_vector_t* vector, size_t index);
+void* commc_vector_get(const commc_vector_t* vector, size_t index);
 
 /*
 
@@ -119,7 +154,7 @@ int commc_vector_set(commc_vector_t* vector, size_t index, const void* element);
 
 */
 
-size_t commc_vector_size(commc_vector_t* vector);
+size_t commc_vector_size(const commc_vector_t* vector);
 
 /*
 
@@ -129,7 +164,7 @@ size_t commc_vector_size(commc_vector_t* vector);
 
 */
 
-size_t commc_vector_capacity(commc_vector_t* vector);
+size_t commc_vector_capacity(const commc_vector_t* vector);
 
 /*
 
@@ -149,7 +184,7 @@ int commc_vector_reserve(commc_vector_t* vector, size_t new_capacity);
 
 */
 
-int commc_vector_is_empty(commc_vector_t* vector);
+int commc_vector_is_empty(const commc_vector_t* vector);
 
 /*
 
@@ -192,7 +227,7 @@ void commc_vector_erase(commc_vector_t* vector, size_t index);
 
 */
 
-void* commc_vector_front(commc_vector_t* vector);
+void* commc_vector_front(const commc_vector_t* vector);
 
 /*
 
@@ -202,7 +237,70 @@ void* commc_vector_front(commc_vector_t* vector);
 
 */
 
-void* commc_vector_back(commc_vector_t* vector);
+void* commc_vector_back(const commc_vector_t* vector);
+
+/*
+	==================================
+             --- ITERATORS ---
+	==================================
+*/
+
+/*
+
+         commc_vector_begin()
+	       ---
+	       returns iterator positioned at the first element.
+
+*/
+
+commc_vector_iterator_t commc_vector_begin(const commc_vector_t* vector);
+
+/*
+
+         commc_vector_next()
+	       ---
+	       advances iterator to the next element.
+	       returns 1 if successful, 0 if end reached.
+
+*/
+
+int commc_vector_next(commc_vector_iterator_t* iterator);
+
+/*
+
+         commc_vector_iterator_data()
+	       ---
+	       retrieves data from current iterator position.
+
+*/
+
+void* commc_vector_iterator_data(commc_vector_iterator_t* iterator);
+
+/*
+	==================================
+             --- SEARCH ---
+	==================================
+*/
+
+/*
+
+         commc_vector_find()
+	       ---
+	       linear search for matching element using comparison function.
+
+*/
+
+void* commc_vector_find(const commc_vector_t* vector, const void* element, commc_compare_func compare);
+
+/*
+
+         commc_vector_find_index()
+	       ---
+	       returns index of first matching element, -1 if not found.
+
+*/
+
+int commc_vector_find_index(const commc_vector_t* vector, const void* element, commc_compare_func compare);
 
 #endif /* COMMC_VECTOR_H */
 

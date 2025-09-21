@@ -25,10 +25,28 @@
 	==================================
 */
 
-#ifndef  COMMC_LIST_H
-#define  COMMC_LIST_H
+#ifndef   COMMC_LIST_H
+#define   COMMC_LIST_H
 
 #include  <stddef.h>
+
+/*
+	==================================
+             --- TYPEDEFS ---
+	==================================
+*/
+
+/*
+
+         commc_compare_func
+	       ---
+	       standard comparison function interface used across
+	       all COMMON-C data structures. returns negative,
+	       zero, or positive for less-than, equal, greater-than.
+
+*/
+
+typedef int (*commc_compare_func)(const void* a, const void* b);
 
 /*
 	==================================
@@ -133,7 +151,7 @@ void commc_list_pop_back(commc_list_t* list);
 
 */
 
-void* commc_list_front(commc_list_t* list);
+void* commc_list_front(const commc_list_t* list);
 
 /*
 
@@ -143,7 +161,7 @@ void* commc_list_front(commc_list_t* list);
 
 */
 
-void* commc_list_back(commc_list_t* list);
+void* commc_list_back(const commc_list_t* list);
 
 /*
 
@@ -153,7 +171,7 @@ void* commc_list_back(commc_list_t* list);
 
 */
 
-size_t commc_list_size(commc_list_t* list);
+size_t commc_list_size(const commc_list_t* list);
 
 /*
 
@@ -163,7 +181,95 @@ size_t commc_list_size(commc_list_t* list);
 
 */
 
-int commc_list_is_empty(commc_list_t* list);
+int commc_list_is_empty(const commc_list_t* list);
+
+/*
+
+         commc_list_clear()
+	       ---
+	       removes all elements from the list.
+	       the list remains valid and can be reused.
+	       does not free user data stored in nodes.
+
+*/
+
+void commc_list_clear(commc_list_t* list);
+
+/*
+	==================================
+             --- ITERATORS ---
+	==================================
+*/
+
+/* iterator structure for traversing lists. */
+
+typedef struct {
+
+  commc_list_node_t*    current;     /* current node position */
+  const commc_list_t*   list;        /* list being iterated */
+
+} commc_list_iterator_t;
+
+/*
+
+         commc_list_begin()
+	       ---
+	       returns iterator pointing to first element.
+	       provides C89-compliant traversal mechanism
+	       for educational algorithm implementation.
+
+*/
+
+commc_list_iterator_t commc_list_begin(const commc_list_t* list);
+
+/*
+
+         commc_list_next()
+	       ---
+	       advances iterator to next element.
+	       returns 1 if successful, 0 if at end.
+
+*/
+
+int commc_list_next(commc_list_iterator_t* iterator);
+
+/*
+
+         commc_list_iterator_data()
+	       ---
+	       retrieves data from current iterator position.
+	       returns NULL if iterator is invalid or at end.
+
+*/
+
+void* commc_list_iterator_data(commc_list_iterator_t* iterator);
+
+/*
+	==================================
+             --- SEARCH ---
+	==================================
+*/
+
+/*
+
+         commc_list_find()
+	       ---
+	       searches for first element matching the given data
+	       using provided comparison function. returns null if not found.
+
+*/
+
+void* commc_list_find(const commc_list_t* list, const void* data, commc_compare_func compare);
+
+/*
+
+         commc_list_find_index()
+	       ---
+	       finds index of first matching element, returns -1 if not found.
+
+*/
+
+int commc_list_find_index(const commc_list_t* list, const void* data, commc_compare_func compare);
 
 #endif /* COMMC_LIST_H */
 

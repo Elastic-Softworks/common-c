@@ -22,12 +22,15 @@
 */
 
 #include  "commc/error.h"
+#include  <string.h>
 
 /*
 	==================================
              --- GLOBALS ---
 	==================================
 */
+
+static commc_error_context_t error_context = {0};
 
 static const char* error_messages[] = {
 
@@ -107,6 +110,169 @@ commc_error_t commc_assert(int condition, const char* message) {
 void commc_report_error(commc_error_t error, const char* file, int line) {
 
   fprintf(stderr, "error [%d]: %s at %s:%d\n", error, commc_error_message(error), file, line);
+
+}
+
+/*
+
+         commc_log()
+	       ---
+	       unified logging system that outputs messages with
+	       consistent C-FORM formatting. uses 'OUTPUT: ...' 
+	       prefix pattern for educational clarity and to
+	       match established project output standards.
+
+*/
+
+void commc_log(commc_log_level_t level, const char* message) {
+
+  const char* level_prefixes[] = {
+    "DEBUG", "INFO", "WARN", "ERROR"
+  };
+
+  if  (!message) {
+
+    return;
+
+  }
+
+  printf("OUTPUT: %s %s\n", level_prefixes[level], message);
+
+}
+
+/*
+
+         commc_log_debug()
+	       ---
+	       debug-level logging wrapper. in production builds,
+	       debug messages may be disabled for performance.
+	       useful for detailed algorithm tracing and state inspection.
+
+*/
+
+void commc_log_debug(const char* message) {
+
+#ifdef DEBUG
+
+  commc_log(COMMC_LOG_DEBUG, message);
+
+#else
+
+  (void)message; /* suppress unused parameter warning */
+  
+#endif
+
+}
+
+/*
+
+         commc_log_info()
+	       ---
+	       informational logging for normal operational messages.
+	       used to provide user feedback about successful operations,
+	       progress updates, and general system status.
+
+*/
+
+void commc_log_info(const char* message) {
+
+  commc_log(COMMC_LOG_INFO, message);
+
+}
+
+/*
+
+         commc_log_warn()
+	       ---
+	       warning-level logging for non-fatal issues.
+	       indicates conditions that should be addressed
+	       but don't prevent continued execution.
+
+*/
+
+void commc_log_warn(const char* message) {
+
+  commc_log(COMMC_LOG_WARN, message);
+
+}
+
+/*
+
+         commc_log_error()
+	       ---
+	       error-level logging for serious problems.
+	       indicates conditions that may cause system
+	       instability or incorrect behavior.
+
+*/
+
+void commc_log_error(const char* message) {
+
+  commc_log(COMMC_LOG_ERROR, message);
+
+}
+
+/*
+
+         commc_error_set_context()
+	       ---
+	       captures comprehensive error context for detailed
+	       reporting. this educational system helps developers
+	       understand not just what went wrong, but exactly
+	       where and why it happened in the codebase.
+
+*/
+
+void commc_error_set_context(commc_error_t error, const char* file, int line, 
+                             const char* function, const char* custom_message) {
+
+  error_context.error_code    = error;
+  error_context.file_name     = file;
+  error_context.line_number   = line;
+  error_context.function_name = function;
+
+  if  (custom_message) {
+
+    strncpy(error_context.custom_message, custom_message, 255);
+    error_context.custom_message[255] = '\0'; /* ensure null termination */
+
+  } else {
+
+    error_context.custom_message[0] = '\0';
+
+  }
+
+}
+
+/*
+
+         commc_error_get_detailed_message()
+	       ---
+	       generates comprehensive error message combining
+	       error code, location information, and custom details.
+	       designed for educational debugging to help new
+	       programmers understand error context completely.
+
+*/
+
+const char* commc_error_get_detailed_message(void) {
+
+  static char detailed_message[512];
+
+  sprintf(detailed_message,
+          "ERROR [%d]: %s\n"
+          "  FILE: %s\n"
+          "  LINE: %d\n" 
+          "  FUNCTION: %s\n"
+          "  DETAILS: %s",
+          error_context.error_code,
+          commc_error_message(error_context.error_code),
+          error_context.file_name ? error_context.file_name : "unknown",
+          error_context.line_number,
+          error_context.function_name ? error_context.function_name : "unknown", 
+          error_context.custom_message[0] ? error_context.custom_message : "none");
+
+  return detailed_message;
 
 }
 

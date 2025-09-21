@@ -23,6 +23,7 @@
 */
 
 #include "commc/time.h"
+#include "commc/error.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -62,7 +63,14 @@ double commc_time_get_seconds(void) {
 
 void commc_timer_start(commc_timer_t* timer) {
 
-  if  (timer && !timer->is_running) {
+  if  (!timer) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return;
+
+  }
+
+  if  (!timer->is_running) {
 
     timer->is_running = 1;
     timer->start_time = clock();
@@ -82,7 +90,14 @@ void commc_timer_start(commc_timer_t* timer) {
 
 void commc_timer_stop(commc_timer_t* timer) {
 
-  if  (timer && timer->is_running) {
+  if  (!timer) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return;
+
+  }
+
+  if  (timer->is_running) {
 
     timer->elapsed_time += clock() - timer->start_time;
     timer->is_running    = 0;
@@ -101,13 +116,16 @@ void commc_timer_stop(commc_timer_t* timer) {
 
 void commc_timer_reset(commc_timer_t* timer) {
 
-  if  (timer) {
+  if  (!timer) {
 
-    timer->elapsed_time = 0;
-    timer->start_time   = 0;
-    timer->is_running   = 0;
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return;
 
   }
+
+  timer->elapsed_time = 0;
+  timer->start_time   = 0;
+  timer->is_running   = 0;
 
 }
 
@@ -123,6 +141,7 @@ double commc_timer_get_elapsed_seconds(commc_timer_t* timer) {
 
   if  (!timer) {
 
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
     return 0.0;
 
   }

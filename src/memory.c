@@ -22,6 +22,7 @@
 */
 
 #include "commc/memory.h"
+#include "commc/error.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -77,6 +78,7 @@ commc_memory_pool_t* commc_memory_pool_create(size_t block_size, size_t block_co
 
   if  (!pool) {
 
+    commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
     return NULL;
 
   }
@@ -87,6 +89,7 @@ commc_memory_pool_t* commc_memory_pool_create(size_t block_size, size_t block_co
 
   if  (!pool->buffer) {
 
+    commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
     free(pool);
     return NULL;
 
@@ -124,12 +127,14 @@ void* commc_memory_pool_alloc(commc_memory_pool_t* pool) {
 
   if  (!pool) {
 
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
     return NULL;
 
   }
 
   if  (!pool->free_blocks) {
 
+    commc_log_debug("OUTPUT: WARNING - Memory pool exhausted in commc_memory_pool_alloc");
     return NULL;
 
   }
@@ -154,6 +159,7 @@ void commc_memory_pool_free(commc_memory_pool_t* pool, void* block) {
 
   if  (!pool || !block) {
 
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
     return; /* handle null parameters gracefully */
 
   }

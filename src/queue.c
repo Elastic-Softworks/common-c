@@ -22,6 +22,7 @@
 */
 
 #include "commc/queue.h"
+#include "commc/error.h"
 
 /*
 	==================================
@@ -53,6 +54,13 @@ commc_queue_t* commc_queue_create(void) {
 
 void commc_queue_destroy(commc_queue_t* queue) {
 
+  if  (!queue) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return;
+
+  }
+
   commc_list_destroy(queue);
 
 }
@@ -66,6 +74,13 @@ void commc_queue_destroy(commc_queue_t* queue) {
 */
 
 void commc_queue_enqueue(commc_queue_t* queue, void* data) {
+
+  if  (!queue) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return;
+
+  }
 
   commc_list_push_back(queue, data);
 
@@ -81,7 +96,16 @@ void commc_queue_enqueue(commc_queue_t* queue, void* data) {
 
 void* commc_queue_dequeue(commc_queue_t* queue) {
 
-  void* data = commc_list_front(queue);
+  void* data;
+
+  if  (!queue) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return NULL;
+
+  }
+
+  data = commc_list_front(queue);
   commc_list_pop_front(queue);
   return data;
 
@@ -96,6 +120,13 @@ void* commc_queue_dequeue(commc_queue_t* queue) {
 */
 
 void* commc_queue_front(commc_queue_t* queue) {
+
+  if  (!queue) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return NULL;
+
+  }
 
   return commc_list_front(queue);
 
@@ -140,6 +171,55 @@ size_t commc_queue_size(commc_queue_t* queue) {
 int commc_queue_is_empty(commc_queue_t* queue) {
 
   return commc_list_is_empty(queue);
+
+}
+
+/*
+	==================================
+             --- ITERATORS ---
+	==================================
+*/
+
+/*
+
+         commc_queue_begin()
+	       ---
+	       delegates to the underlying list iterator for
+	       consistent traversal behavior across data structures.
+
+*/
+
+commc_queue_iterator_t commc_queue_begin(const commc_queue_t* queue) {
+
+  return commc_list_begin(queue);
+
+}
+
+/*
+
+         commc_queue_next()
+	       ---
+	       advances queue iterator using list iterator logic.
+
+*/
+
+int commc_queue_next(commc_queue_iterator_t* iterator) {
+
+  return commc_list_next(iterator);
+
+}
+
+/*
+
+         commc_queue_iterator_data()
+	       ---
+	       retrieves current iterator data via list implementation.
+
+*/
+
+void* commc_queue_iterator_data(commc_queue_iterator_t* iterator) {
+
+  return commc_list_iterator_data(iterator);
 
 }
 

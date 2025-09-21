@@ -40,6 +40,18 @@
 typedef commc_list_t commc_queue_t;
 
 /*
+
+         commc_queue_iterator_t
+	       ---
+	       iterator type for queue traversal.
+	       leverages underlying list iterator implementation
+	       for consistent iterator patterns across modules.
+
+*/
+
+typedef commc_list_iterator_t commc_queue_iterator_t;
+
+/*
 	==================================
              --- FUNCTIONS ---
 	==================================
@@ -127,6 +139,42 @@ size_t commc_queue_size(commc_queue_t* queue);
 */
 
 int commc_queue_is_empty(commc_queue_t* queue);
+
+/*
+	==================================
+             --- ITERATORS ---
+	==================================
+*/
+
+/*
+
+         commc_queue_begin()
+	       ---
+	       returns iterator positioned at the front element.
+
+*/
+
+commc_queue_iterator_t commc_queue_begin(const commc_queue_t* queue);
+
+/*
+
+         commc_queue_next()
+	       ---
+	       advances iterator to the next element in queue order.
+
+*/
+
+int commc_queue_next(commc_queue_iterator_t* iterator);
+
+/*
+
+         commc_queue_iterator_data()
+	       ---
+	       retrieves data from current iterator position.
+
+*/
+
+void* commc_queue_iterator_data(commc_queue_iterator_t* iterator);
 
 #endif /* COMMC_QUEUE_H */
 

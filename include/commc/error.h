@@ -50,6 +50,37 @@ typedef enum {
 
 /*
 	==================================
+             --- LOG LEVELS ---
+	==================================
+*/
+
+typedef enum {
+
+  COMMC_LOG_DEBUG,        /* 0: DETAILED DEBUG INFORMATION */
+  COMMC_LOG_INFO,         /* 1: GENERAL INFORMATION MESSAGES */  
+  COMMC_LOG_WARN,         /* 2: WARNING CONDITIONS */
+  COMMC_LOG_ERROR         /* 3: ERROR CONDITIONS */
+
+} commc_log_level_t;
+
+/*
+	==================================
+             --- ERROR CONTEXT ---
+	==================================
+*/
+
+typedef struct {
+
+  commc_error_t   error_code;           /* THE ERROR TYPE */
+  const char*     file_name;            /* SOURCE FILE WHERE ERROR OCCURRED */
+  int             line_number;          /* LINE NUMBER IN SOURCE FILE */
+  const char*     function_name;        /* FUNCTION WHERE ERROR OCCURRED */
+  char            custom_message[256];  /* ADDITIONAL ERROR DETAILS */
+
+} commc_error_context_t;
+
+/*
+	==================================
              --- FUNCTIONS ---
 	==================================
 */
@@ -90,6 +121,87 @@ commc_error_t commc_assert(int condition, const char* message);
 */
 
 void commc_report_error(commc_error_t error, const char* file, int line);
+
+/*
+
+           commc_log()
+           ---
+           unified logging function with severity levels.
+           follows C-FORM 'OUTPUT: ...' formatting standard
+           for educational clarity and consistent messaging.
+
+*/
+
+void commc_log(commc_log_level_t level, const char* message);
+
+/*
+
+           commc_log_debug()
+           ---
+           convenience wrapper for debug-level messages.
+           only outputs in debug builds for performance.
+
+*/
+
+void commc_log_debug(const char* message);
+
+/*
+
+           commc_log_info()
+           ---
+           convenience wrapper for informational messages.
+           used for normal operational feedback.
+
+*/
+
+void commc_log_info(const char* message);
+
+/*
+
+           commc_log_warn()
+           ---
+           convenience wrapper for warning messages.
+           indicates potential issues that don't stop execution.
+
+*/
+
+void commc_log_warn(const char* message);
+
+/*
+
+           commc_log_error()
+           ---
+           convenience wrapper for error messages.
+           indicates serious problems requiring attention.
+
+*/
+
+void commc_log_error(const char* message);
+
+/*
+
+           commc_error_set_context()
+           ---
+           sets detailed error context information for enhanced
+           debugging. stores file, line, function, and custom 
+           message for comprehensive error reporting.
+
+*/
+
+void commc_error_set_context(commc_error_t error, const char* file, int line, 
+                             const char* function, const char* custom_message);
+
+/*
+
+           commc_error_get_detailed_message()
+           ---
+           retrieves comprehensive error message with full context.
+           returns formatted string with file, line, function, and
+           custom message information for educational debugging.
+
+*/
+
+const char* commc_error_get_detailed_message(void);
 
 /* macro wrapper for assertions with file/line info. */
 

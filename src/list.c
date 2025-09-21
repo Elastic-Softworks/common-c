@@ -22,8 +22,10 @@
 	==================================
 */
 
-#include <stdlib.h>
-#include "commc/list.h"
+#include    <stdlib.h>
+
+#include    "commc/list.h"
+#include    "commc/error.h"
 
 /*
 	==================================
@@ -54,6 +56,7 @@ commc_list_t* commc_list_create(void) {
 
   if  (!list) {
 
+    commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
     return NULL;
 
   }
@@ -112,6 +115,7 @@ commc_list_node_t* commc_list_push_front(commc_list_t* list, void* data) {
 
   if  (!list) {
 
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
     return NULL;
 
   }
@@ -120,6 +124,7 @@ commc_list_node_t* commc_list_push_front(commc_list_t* list, void* data) {
 
   if  (!new_node) {
 
+    commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
     return NULL;
 
   }
@@ -159,6 +164,7 @@ commc_list_node_t* commc_list_push_back(commc_list_t* list, void* data) {
 
   if  (!list) {
 
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
     return NULL;
 
   }
@@ -167,6 +173,7 @@ commc_list_node_t* commc_list_push_back(commc_list_t* list, void* data) {
 
   if  (!new_node) {
 
+    commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
     return NULL;
 
   }
@@ -272,10 +279,11 @@ void commc_list_pop_back(commc_list_t* list) {
 
 */
 
-void* commc_list_front(commc_list_t* list) {
+void* commc_list_front(const commc_list_t* list) {
 
   if  (!list || !list->head) {
 
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
     return NULL;
 
   }
@@ -292,10 +300,11 @@ void* commc_list_front(commc_list_t* list) {
 
 */
 
-void* commc_list_back(commc_list_t* list) {
+void* commc_list_back(const commc_list_t* list) {
 
   if  (!list || !list->tail) {
 
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
     return NULL;
 
   }
@@ -312,7 +321,7 @@ void* commc_list_back(commc_list_t* list) {
 
 */
 
-size_t commc_list_size(commc_list_t* list) {
+size_t commc_list_size(const commc_list_t* list) {
 
   return list ? list->size : 0;
 
@@ -326,9 +335,214 @@ size_t commc_list_size(commc_list_t* list) {
 
 */
 
-int commc_list_is_empty(commc_list_t* list) {
+int commc_list_is_empty(const commc_list_t* list) {
 
   return list ? (list->size == 0) : 1;
+
+}
+
+/*
+
+         commc_list_clear()
+	       ---
+	       removes all elements from the list without
+	       deallocating the list structure itself. the
+	       list can be reused after clearing.
+
+*/
+
+void commc_list_clear(commc_list_t* list) {
+
+  commc_list_node_t* current;
+
+  if  (!list) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return;
+
+  }
+
+  current = list->head;
+
+  while  (current) {
+
+    commc_list_node_t* next = current->next;
+    free(current);
+    current = next;
+
+  }
+
+  list->head = NULL;
+  list->tail = NULL;
+  list->size = 0;
+
+}
+
+/*
+	==================================
+             --- ITERATORS ---
+	==================================
+*/
+
+/*
+
+         commc_list_begin()
+	       ---
+	       initializes iterator to the first element of the list.
+	       provides educational example of iterator pattern
+	       implementation using C89-compliant structures.
+
+*/
+
+commc_list_iterator_t commc_list_begin(const commc_list_t* list) {
+
+  commc_list_iterator_t iterator;
+
+  if  (!list) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    iterator.current = NULL;
+    iterator.list = NULL;
+    return iterator;
+
+  }
+
+  iterator.current = list->head;
+  iterator.list = list;
+
+  return iterator;
+
+}
+
+/*
+
+         commc_list_next()
+	       ---
+	       advances iterator to the next element in the list.
+	       demonstrates pointer-based traversal patterns
+	       commonly used in systems programming.
+
+*/
+
+int commc_list_next(commc_list_iterator_t* iterator) {
+
+  if  (!iterator || !iterator->current) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return 0;
+
+  }
+
+  iterator->current = iterator->current->next;
+  return iterator->current != NULL;
+
+}
+
+/*
+
+         commc_list_iterator_data()
+	       ---
+	       retrieves data from the current iterator position.
+	       safe accessor that handles invalid states gracefully
+	       while teaching proper error checking patterns.
+
+*/
+
+void* commc_list_iterator_data(commc_list_iterator_t* iterator) {
+
+  if  (!iterator || !iterator->current) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return NULL;
+
+  }
+
+  return iterator->current->data;
+
+}
+
+/*
+	==================================
+             --- SEARCH ---
+	==================================
+*/
+
+/*
+
+         commc_list_find()
+	       ---
+	       demonstrates linear search algorithm implementation
+	       with function pointer pattern for flexible comparison.
+
+*/
+
+void* commc_list_find(const commc_list_t* list, const void* data, commc_compare_func compare) {
+
+  commc_list_node_t* current;
+
+  if  (!list || !data || !compare) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return NULL;
+
+  }
+
+  current = list->head;
+
+  while  (current) {
+
+    if  (compare(current->data, data) == 0) {
+
+      return current->data;
+
+    }
+
+    current = current->next;
+
+  }
+
+  return NULL;
+
+}
+
+/*
+
+         commc_list_find_index()
+	       ---
+	       returns the position index of the first matching element.
+	       useful for positional operations after successful search.
+
+*/
+
+int commc_list_find_index(const commc_list_t* list, const void* data, commc_compare_func compare) {
+
+  commc_list_node_t* current;
+  int                index;
+
+  if  (!list || !data || !compare) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return -1;
+
+  }
+
+  current = list->head;
+  index = 0;
+
+  while  (current) {
+
+    if  (compare(current->data, data) == 0) {
+
+      return index;
+
+    }
+
+    current = current->next;
+    index++;
+
+  }
+
+  return -1;
 
 }
 

@@ -45,10 +45,21 @@ typedef struct commc_tree_node_t commc_tree_node_t;
 	==================================
 */
 
-/* function pointer for comparing two keys.
-   returns < 0 if a < b, 0 if a == b, > 0 if a > b. */
+/*
 
-typedef int (*commc_tree_compare_func)(const void* a, const void* b);
+         commc_compare_func
+	       ---
+	       standard comparison function interface used across
+	       all COMMON-C data structures. returns negative,
+	       zero, or positive for less-than, equal, greater-than.
+
+*/
+
+typedef int (*commc_compare_func)(const void* a, const void* b);
+
+/* deprecated: use commc_compare_func for new code */
+
+typedef commc_compare_func commc_tree_compare_func;
 
 /*
 	==================================

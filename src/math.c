@@ -148,6 +148,8 @@ commc_vec2_t commc_vec2_normalize(commc_vec2_t v) {
 
   /* return original if length is zero or very small */
 
+  commc_log_debug("OUTPUT: WARNING - Normalizing zero-length vector in commc_vec2_normalize");
+
   return v;
 
 }
@@ -292,6 +294,8 @@ commc_vec3_t commc_vec3_normalize(commc_vec3_t v) {
     return commc_vec3_scale(v, 1.0f / length);
 
   }
+
+  commc_log_debug("OUTPUT: WARNING - Normalizing zero-length vector in commc_vec3_normalize");
 
   return v; /* return original if length is zero or very small */
 
@@ -904,6 +908,7 @@ commc_quat_t commc_quat_normalize(commc_quat_t q) {
 
   if  (length_sq < COMMC_EPSILON) {
 
+    commc_log_debug("OUTPUT: WARNING - Normalizing zero-length quaternion in commc_quat_normalize");
     return commc_quat_identity();
 
   }

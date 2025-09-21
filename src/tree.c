@@ -23,6 +23,7 @@
 */
 
 #include "commc/tree.h"
+#include "commc/error.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -76,6 +77,7 @@ static commc_tree_node_t* commc_tree_node_create(void* key, void* value) {
 
   if  (!node) {
 
+    commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
     return NULL;
 
   }
@@ -297,6 +299,7 @@ commc_tree_t* commc_tree_create(commc_tree_compare_func compare_func) {
 
   if  (!tree) {
 
+    commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
     return NULL;
 
   }
@@ -342,6 +345,7 @@ int commc_tree_insert(commc_tree_t* tree, void* key, void* value) {
 
   if  (!tree || !tree->compare_func) {
 
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
     return 0;
 
   }
@@ -373,6 +377,7 @@ void* commc_tree_get(commc_tree_t* tree, const void* key) {
 
   if  (!tree || !tree->compare_func) {
 
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
     return NULL;
 
   }
@@ -395,6 +400,7 @@ void commc_tree_remove(commc_tree_t* tree, const void* key) {
 
   if  (!tree || !tree->compare_func) {
 
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
     return;
 
   }

@@ -24,6 +24,7 @@
 
 #include "commc/hash_table.h"
 #include "commc/list.h"
+#include "commc/error.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -106,6 +107,7 @@ commc_hash_table_t* commc_hash_table_create(size_t capacity) {
 
   if  (!table) {
 
+    commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
     return NULL;
 
   }
@@ -114,6 +116,7 @@ commc_hash_table_t* commc_hash_table_create(size_t capacity) {
 
   if  (!table->buckets) {
 
+    commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
     free(table);
     return NULL;
 
@@ -131,6 +134,9 @@ commc_hash_table_t* commc_hash_table_create(size_t capacity) {
       /* cleanup partial init */
 
       size_t j;
+      
+      commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
+      
       for  (j = 0; j < i; j++) {
         commc_list_destroy(table->buckets[j]);
       }
@@ -192,11 +198,11 @@ void commc_hash_table_destroy(commc_hash_table_t* table) {
          commc_hash_table_insert()
 	       ---
 	       adds or updates a key-value pair.
-	       returns 1 on success, 0 on failure.
+	       returns COMMC_SUCCESS on success, appropriate error code on failure.
 
 */
 
-int commc_hash_table_insert(commc_hash_table_t* table, const char* key, void* value) {
+commc_error_t commc_hash_table_insert(commc_hash_table_t* table, const char* key, void* value) {
 
   unsigned long       hash_val;
   size_t              bucket_index;
@@ -205,7 +211,8 @@ int commc_hash_table_insert(commc_hash_table_t* table, const char* key, void* va
 
   if  (!table || !key) {
 
-    return 0;
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return COMMC_ARGUMENT_ERROR;
 
   }
 
@@ -223,7 +230,7 @@ int commc_hash_table_insert(commc_hash_table_t* table, const char* key, void* va
     if  (strcmp(entry->key, key) == 0) {
 
       entry->value = value; /* update value */
-      return 1;
+      return COMMC_SUCCESS;
 
     }
 
@@ -237,7 +244,8 @@ int commc_hash_table_insert(commc_hash_table_t* table, const char* key, void* va
 
   if  (!entry) {
 
-    return 0;
+    commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
+    return COMMC_MEMORY_ERROR;
 
   }
 
@@ -245,8 +253,9 @@ int commc_hash_table_insert(commc_hash_table_t* table, const char* key, void* va
 
   if  (!entry->key) {
 
+    commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
     free(entry);
-    return 0;
+    return COMMC_MEMORY_ERROR;
 
   }
 
@@ -254,15 +263,16 @@ int commc_hash_table_insert(commc_hash_table_t* table, const char* key, void* va
 
   if  (!commc_list_push_back(table->buckets[bucket_index], entry)) {
 
+    commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
     free(entry->key);
     free(entry);
-    return 0;
+    return COMMC_MEMORY_ERROR;
 
   }
 
   table->size++;
 
-  return 1;
+  return COMMC_SUCCESS;
 
 }
 
@@ -284,6 +294,7 @@ void* commc_hash_table_get(commc_hash_table_t* table, const char* key) {
 
   if  (!table || !key) {
 
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
     return NULL;
 
   }
@@ -328,6 +339,7 @@ void commc_hash_table_remove(commc_hash_table_t* table, const char* key) {
 
   if  (!table || !key) {
 
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
     return;
 
   }
@@ -383,6 +395,83 @@ void commc_hash_table_remove(commc_hash_table_t* table, const char* key) {
 size_t commc_hash_table_size(commc_hash_table_t* table) {
 
   return table ? table->size : 0;
+
+}
+
+/*
+
+         commc_hash_table_capacity()
+	       ---
+	       returns the number of buckets allocated for the hash table.
+	       this indicates the internal capacity for element distribution
+	       and can help assess hash table performance characteristics.
+
+*/
+
+size_t commc_hash_table_capacity(commc_hash_table_t* table) {
+
+  return table ? table->capacity : 0;
+
+}
+
+/*
+
+         commc_hash_table_clear()
+	       ---
+	       removes all entries from the hash table while
+	       preserving the bucket structure for efficient reuse.
+	       all keys and bucket contents are freed.
+
+*/
+
+void commc_hash_table_clear(commc_hash_table_t* table) {
+
+  size_t i;
+
+  if  (!table) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return;
+
+  }
+
+  for  (i = 0; i < table->capacity; i++) {
+
+    commc_list_node_t* current;
+
+    if  (!table->buckets[i]) {
+
+      continue;
+
+    }
+
+    current = table->buckets[i]->head;
+
+    while  (current) {
+
+      commc_hash_entry_t* entry = (commc_hash_entry_t*)current->data;
+      
+      if  (entry && entry->key) {
+
+        free(entry->key);
+
+      }
+
+      if  (entry) {
+
+        free(entry);
+
+      }
+
+      current = current->next;
+
+    }
+
+    commc_list_clear(table->buckets[i]);
+
+  }
+
+  table->size = 0;
 
 }
 

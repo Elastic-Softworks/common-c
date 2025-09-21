@@ -22,6 +22,7 @@
 */
 
 #include "commc/stack.h"
+#include "commc/error.h"
 
 /*
 	==================================
@@ -53,6 +54,13 @@ commc_stack_t* commc_stack_create(void) {
 
 void commc_stack_destroy(commc_stack_t* stack) {
 
+  if  (!stack) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return;
+
+  }
+
   commc_list_destroy(stack);
 
 }
@@ -66,6 +74,13 @@ void commc_stack_destroy(commc_stack_t* stack) {
 */
 
 void commc_stack_push(commc_stack_t* stack, void* data) {
+
+  if  (!stack) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return;
+
+  }
 
   commc_list_push_back(stack, data);
 
@@ -81,7 +96,16 @@ void commc_stack_push(commc_stack_t* stack, void* data) {
 
 void* commc_stack_pop(commc_stack_t* stack) {
 
-  void* data = commc_list_back(stack);
+  void* data;
+
+  if  (!stack) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return NULL;
+
+  }
+
+  data = commc_list_back(stack);
   commc_list_pop_back(stack);
   return data;
 
@@ -96,6 +120,13 @@ void* commc_stack_pop(commc_stack_t* stack) {
 */
 
 void* commc_stack_peek(commc_stack_t* stack) {
+
+  if  (!stack) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return NULL;
+
+  }
 
   return commc_list_back(stack);
 
@@ -126,6 +157,55 @@ size_t commc_stack_size(commc_stack_t* stack) {
 int commc_stack_is_empty(commc_stack_t* stack) {
 
   return commc_list_is_empty(stack);
+
+}
+
+/*
+	==================================
+             --- ITERATORS ---
+	==================================
+*/
+
+/*
+
+         commc_stack_begin()
+	       ---
+	       delegates to list iterator, providing access to
+	       stack elements from bottom (first pushed) to top.
+
+*/
+
+commc_stack_iterator_t commc_stack_begin(const commc_stack_t* stack) {
+
+  return commc_list_begin(stack);
+
+}
+
+/*
+
+         commc_stack_next()
+	       ---
+	       advances iterator using list traversal logic.
+
+*/
+
+int commc_stack_next(commc_stack_iterator_t* iterator) {
+
+  return commc_list_next(iterator);
+
+}
+
+/*
+
+         commc_stack_iterator_data()
+	       ---
+	       retrieves current iterator data via list implementation.
+
+*/
+
+void* commc_stack_iterator_data(commc_stack_iterator_t* iterator) {
+
+  return commc_list_iterator_data(iterator);
 
 }
 
