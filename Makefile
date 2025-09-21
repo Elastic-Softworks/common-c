@@ -46,6 +46,8 @@ TEST_DIR := test
 
 SOURCES := $(SRC_DIR)/args.c \
            $(SRC_DIR)/audio.c \
+           $(SRC_DIR)/avl_tree.c \
+           $(SRC_DIR)/b_tree.c \
            $(SRC_DIR)/error.c \
            $(SRC_DIR)/file.c \
            $(SRC_DIR)/graphics.c \
@@ -57,10 +59,13 @@ SOURCES := $(SRC_DIR)/args.c \
            $(SRC_DIR)/net.c \
            $(SRC_DIR)/particles.c \
            $(SRC_DIR)/queue.c \
+           $(SRC_DIR)/rb_tree.c \
+           $(SRC_DIR)/splay_tree.c \
            $(SRC_DIR)/stack.c \
            $(SRC_DIR)/string.c \
            $(SRC_DIR)/time.c \
            $(SRC_DIR)/tree.c \
+           $(SRC_DIR)/trie.c \
            $(SRC_DIR)/vector.c
 
 # object files
