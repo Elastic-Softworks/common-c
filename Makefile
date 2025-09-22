@@ -48,6 +48,9 @@ SOURCES := $(SRC_DIR)/args.c \
            $(SRC_DIR)/audio.c \
            $(SRC_DIR)/avl_tree.c \
            $(SRC_DIR)/b_tree.c \
+           $(SRC_DIR)/bloom_filter.c \
+           $(SRC_DIR)/bsp_tree.c \
+           $(SRC_DIR)/disjoint_set.c \
            $(SRC_DIR)/error.c \
            $(SRC_DIR)/fibonacci_heap.c \
            $(SRC_DIR)/file.c \
@@ -56,6 +59,7 @@ SOURCES := $(SRC_DIR)/args.c \
            $(SRC_DIR)/hash_table.c \
            $(SRC_DIR)/input.c \
            $(SRC_DIR)/list.c \
+           $(SRC_DIR)/lru_cache.c \
            $(SRC_DIR)/math.c \
            $(SRC_DIR)/memory.c \
            $(SRC_DIR)/net.c \
@@ -65,6 +69,8 @@ SOURCES := $(SRC_DIR)/args.c \
            $(SRC_DIR)/quadtree.c \
            $(SRC_DIR)/queue.c \
            $(SRC_DIR)/rb_tree.c \
+           $(SRC_DIR)/rope.c \
+           $(SRC_DIR)/skip_list.c \
            $(SRC_DIR)/splay_tree.c \
            $(SRC_DIR)/stack.c \
            $(SRC_DIR)/string.c \
