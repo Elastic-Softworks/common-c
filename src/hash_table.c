@@ -47,9 +47,11 @@ typedef struct {
 
 struct commc_hash_table_t {
 
-  commc_list_t** buckets; /* array of linked lists (buckets) */
-  size_t         capacity;/* number of buckets */
-  size_t         size;    /* number of elements stored */
+  commc_list_t**         buckets;       /* array of linked lists (buckets) */
+  size_t                 capacity;      /* number of buckets */
+  size_t                 size;          /* number of elements stored */
+  commc_hash_function_t  hash_function; /* custom hash function pointer */
+  int                    auto_resize;   /* enable automatic resizing */
 
 };
 
@@ -80,6 +82,27 @@ static unsigned long hash_string_djb2(const char* str) {
   }
 
   return hash;
+
+}
+
+/*
+
+         get_hash_value()
+	       ---
+	       gets the hash value for a key using either the custom
+	       hash function (if set) or the default djb2 algorithm.
+
+*/
+
+static unsigned long get_hash_value(commc_hash_table_t* table, const char* key) {
+
+  if  (table->hash_function) {
+
+    return table->hash_function(key);
+
+  }
+
+  return hash_string_djb2(key);
 
 }
 
@@ -122,8 +145,10 @@ commc_hash_table_t* commc_hash_table_create(size_t capacity) {
 
   }
 
-  table->capacity = capacity;
-  table->size     = 0;
+  table->capacity      = capacity;
+  table->size          = 0;
+  table->hash_function = NULL;     /* NULL means use default djb2 */
+  table->auto_resize   = 0;        /* disabled by default */
 
   for  (i = 0; i < capacity; i++) {
 
@@ -216,7 +241,21 @@ commc_error_t commc_hash_table_insert(commc_hash_table_t* table, const char* key
 
   }
 
-  hash_val     = hash_string_djb2(key);
+  /* check for auto-resize if load factor would exceed 0.75 */
+
+  if  (table->auto_resize && ((float)(table->size + 1) / table->capacity) > 0.75f) {
+
+    commc_error_t resize_result = commc_hash_table_rehash(table, table->capacity * 2);
+
+    if  (resize_result != COMMC_SUCCESS) {
+
+      return resize_result;
+
+    }
+
+  }
+
+  hash_val     = get_hash_value(table, key);
   bucket_index = hash_val % table->capacity;
 
   /* check if key already exists */
@@ -299,7 +338,7 @@ void* commc_hash_table_get(commc_hash_table_t* table, const char* key) {
 
   }
 
-  hash_val     = hash_string_djb2(key);
+  hash_val     = get_hash_value(table, key);
   bucket_index = hash_val % table->capacity;
 
   current_node = table->buckets[bucket_index]->head;
@@ -344,7 +383,7 @@ void commc_hash_table_remove(commc_hash_table_t* table, const char* key) {
 
   }
 
-  hash_val     = hash_string_djb2(key);
+  hash_val     = get_hash_value(table, key);
   bucket_index = hash_val % table->capacity;
 
   current_node = table->buckets[bucket_index]->head;
@@ -472,6 +511,205 @@ void commc_hash_table_clear(commc_hash_table_t* table) {
   }
 
   table->size = 0;
+
+}
+
+/*
+
+         commc_hash_table_rehash()
+	       ---
+	       resizes the hash table to a new capacity and rehashes
+	       all existing elements. this is used both for manual
+	       resizing and automatic load factor management.
+
+*/
+
+commc_error_t commc_hash_table_rehash(commc_hash_table_t* table, size_t new_capacity) {
+
+  commc_list_t**      old_buckets;
+  size_t              old_capacity;
+  size_t              i;
+  commc_list_node_t*  current;
+
+  if  (!table || new_capacity == 0) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return COMMC_ARGUMENT_ERROR;
+
+  }
+
+  /* save old bucket array */
+  old_buckets  = table->buckets;
+  old_capacity = table->capacity;
+
+  /* allocate new bucket array */
+  table->buckets = (commc_list_t**)malloc(sizeof(commc_list_t*) * new_capacity);
+
+  if  (!table->buckets) {
+
+    table->buckets = old_buckets; /* restore old buckets on failure */
+    commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
+    return COMMC_MEMORY_ERROR;
+
+  }
+
+  table->capacity = new_capacity;
+  table->size     = 0; /* will be re-counted during rehashing */
+
+  /* initialize new buckets */
+
+  for  (i = 0; i < new_capacity; i++) {
+
+    table->buckets[i] = commc_list_create();
+
+    if  (!table->buckets[i]) {
+
+      size_t j;
+
+      commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
+      
+      /* cleanup partial init and restore old state */
+
+      for  (j = 0; j < i; j++) {
+        commc_list_destroy(table->buckets[j]);
+      }
+      free(table->buckets);
+      table->buckets  = old_buckets;
+      table->capacity = old_capacity;
+      return COMMC_MEMORY_ERROR;
+
+    }
+
+  }
+
+  /* rehash all existing entries from old buckets to new buckets */
+
+  for  (i = 0; i < old_capacity; i++) {
+
+    current = old_buckets[i]->head;
+
+    while  (current) {
+
+      commc_hash_entry_t* entry       = (commc_hash_entry_t*)current->data;
+      unsigned long       hash_val    = get_hash_value(table, entry->key);
+      size_t              bucket_idx  = hash_val % table->capacity;
+
+      /* insert into new bucket (we know the key doesn't exist yet) */
+
+      if  (!commc_list_push_back(table->buckets[bucket_idx], entry)) {
+
+        size_t j;
+
+        commc_report_error(COMMC_MEMORY_ERROR, __FILE__, __LINE__);
+        
+        /* cleanup and restore old state on failure */
+
+        for  (j = 0; j < new_capacity; j++) {
+          commc_list_destroy(table->buckets[j]);
+        }
+        free(table->buckets);
+        table->buckets  = old_buckets;
+        table->capacity = old_capacity;
+        return COMMC_MEMORY_ERROR;
+
+      }
+
+      table->size++;
+      current = current->next;
+
+    }
+
+  }
+
+  /* destroy old bucket structure (but not the entries, which were moved) */
+
+  for  (i = 0; i < old_capacity; i++) {
+
+    commc_list_node_t* node = old_buckets[i]->head;
+
+    while  (node) {
+
+      commc_list_node_t* next = node->next;
+      free(node); /* free list node but not the entry data */
+      node = next;
+
+    }
+
+    free(old_buckets[i]); /* free list structure */
+
+  }
+
+  free(old_buckets);
+
+  return COMMC_SUCCESS;
+
+}
+
+/*
+
+         commc_hash_table_load_factor()
+	       ---
+	       calculates and returns the current load factor.
+	       load factor = number of elements / number of buckets.
+	       values approaching 1.0 indicate potential performance degradation.
+
+*/
+
+float commc_hash_table_load_factor(commc_hash_table_t* table) {
+
+  if  (!table || table->capacity == 0) {
+
+    return 0.0f;
+
+  }
+
+  return (float)table->size / (float)table->capacity;
+
+}
+
+/*
+
+         commc_hash_table_set_hash_function()
+	       ---
+	       sets a custom hash function for future hash operations.
+	       existing elements are NOT rehashed automatically.
+	       set to NULL to revert to default djb2 algorithm.
+
+*/
+
+void commc_hash_table_set_hash_function(commc_hash_table_t* table, commc_hash_function_t hash_func) {
+
+  if  (!table) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return;
+
+  }
+
+  table->hash_function = hash_func;
+
+}
+
+/*
+
+         commc_hash_table_set_auto_resize()
+	       ---
+	       enables or disables automatic resizing.
+	       when enabled, the table automatically doubles in size
+	       when load factor exceeds 0.75 during insertions.
+
+*/
+
+void commc_hash_table_set_auto_resize(commc_hash_table_t* table, int enable) {
+
+  if  (!table) {
+
+    commc_report_error(COMMC_ARGUMENT_ERROR, __FILE__, __LINE__);
+    return;
+
+  }
+
+  table->auto_resize = enable ? 1 : 0;
 
 }
 

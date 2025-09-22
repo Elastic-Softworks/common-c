@@ -134,6 +134,56 @@ size_t commc_hash_table_capacity(commc_hash_table_t* table);
 
 void commc_hash_table_clear(commc_hash_table_t* table);
 
+/*
+
+         commc_hash_table_rehash()
+	       ---
+	       resizes the hash table to improve load factor distribution.
+	       rehashes all existing elements into the new bucket structure.
+	       new_capacity should ideally be a prime number.
+
+*/
+
+commc_error_t commc_hash_table_rehash(commc_hash_table_t* table, size_t new_capacity);
+
+/*
+
+         commc_hash_table_load_factor()
+	       ---
+	       returns the current load factor (size / capacity) as a float.
+	       useful for determining when to trigger automatic resizing.
+	       typical load factors range from 0.5 to 0.75 for good performance.
+
+*/
+
+float commc_hash_table_load_factor(commc_hash_table_t* table);
+
+/*
+
+         commc_hash_table_set_hash_function()
+	       ---
+	       sets a custom hash function for the table.
+	       the function should accept a string and return an unsigned long.
+	       if set to NULL, reverts to the default djb2 hash function.
+
+*/
+
+typedef unsigned long (*commc_hash_function_t)(const char* key);
+
+void commc_hash_table_set_hash_function(commc_hash_table_t* table, commc_hash_function_t hash_func);
+
+/*
+
+         commc_hash_table_auto_resize()
+	       ---
+	       enables or disables automatic resizing when load factor
+	       exceeds 0.75. when enabled, the table will double in size
+	       and rehash all elements when the threshold is reached.
+
+*/
+
+void commc_hash_table_set_auto_resize(commc_hash_table_t* table, int enable);
+
 #endif /* COMMC_HASH_TABLE_H */
 
 /*

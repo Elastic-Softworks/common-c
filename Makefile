@@ -49,7 +49,9 @@ SOURCES := $(SRC_DIR)/args.c \
            $(SRC_DIR)/avl_tree.c \
            $(SRC_DIR)/b_tree.c \
            $(SRC_DIR)/error.c \
+           $(SRC_DIR)/fibonacci_heap.c \
            $(SRC_DIR)/file.c \
+           $(SRC_DIR)/graph.c \
            $(SRC_DIR)/graphics.c \
            $(SRC_DIR)/hash_table.c \
            $(SRC_DIR)/input.c \
@@ -57,7 +59,10 @@ SOURCES := $(SRC_DIR)/args.c \
            $(SRC_DIR)/math.c \
            $(SRC_DIR)/memory.c \
            $(SRC_DIR)/net.c \
+           $(SRC_DIR)/octree.c \
            $(SRC_DIR)/particles.c \
+           $(SRC_DIR)/priority_queue.c \
+           $(SRC_DIR)/quadtree.c \
            $(SRC_DIR)/queue.c \
            $(SRC_DIR)/rb_tree.c \
            $(SRC_DIR)/splay_tree.c \
