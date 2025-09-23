@@ -50,6 +50,7 @@ SOURCES := $(SRC_DIR)/args.c \
            $(SRC_DIR)/b_tree.c \
            $(SRC_DIR)/bloom_filter.c \
            $(SRC_DIR)/bsp_tree.c \
+           $(SRC_DIR)/circular_buffer.c \
            $(SRC_DIR)/disjoint_set.c \
            $(SRC_DIR)/error.c \
            $(SRC_DIR)/fibonacci_heap.c \
@@ -58,6 +59,7 @@ SOURCES := $(SRC_DIR)/args.c \
            $(SRC_DIR)/graphics.c \
            $(SRC_DIR)/hash_table.c \
            $(SRC_DIR)/input.c \
+           $(SRC_DIR)/lf_queue.c \
            $(SRC_DIR)/list.c \
            $(SRC_DIR)/lru_cache.c \
            $(SRC_DIR)/math.c \

@@ -30,6 +30,12 @@
 #include <stdlib.h>         /* MALLOC, FREE */
 #include <string.h>         /* STRLEN, STRCMP, STRNCMP, MEMCPY, STRSTR */
 
+/* C89 compatibility - SIZE_MAX not defined in C89 */
+
+#ifndef SIZE_MAX
+#define SIZE_MAX ((size_t)-1)
+#endif
+
 /* 
 	==================================
              --- HELPERS ---
@@ -773,7 +779,9 @@ commc_rope_t* commc_rope_concat(commc_rope_t* left, commc_rope_t* right) {
     /* for simplicity, convert to string and back */
     
     {
-      char* str = commc_rope_to_string(right);
+      char* str;
+      
+      str = commc_rope_to_string(right);
       
       if (!str) {
 
@@ -800,7 +808,9 @@ commc_rope_t* commc_rope_concat(commc_rope_t* left, commc_rope_t* right) {
     }
     
     {
-      char* str = commc_rope_to_string(left);
+      char* str;
+      
+      str = commc_rope_to_string(left);
       
       if (!str) {
 
@@ -826,6 +836,50 @@ commc_rope_t* commc_rope_concat(commc_rope_t* left, commc_rope_t* right) {
   
   if (left->total_length == 0 && right->total_length == 0) {
 
+    return result;
+    
+  }
+
+  /* handle cases where one rope is empty */
+  
+  if (left->total_length == 0) {
+
+    /* left is empty, copy right */
+    
+    char* str = commc_rope_to_string(right);
+    
+    if (!str) {
+
+      commc_rope_destroy(result);
+      return NULL;
+      
+    }
+    
+    commc_rope_destroy(result);
+    result = commc_rope_create_from_string(str);
+    free(str);
+    
+    return result;
+    
+  }
+  
+  if (right->total_length == 0) {
+
+    /* right is empty, copy left */
+    
+    char* str = commc_rope_to_string(left);
+    
+    if (!str) {
+
+      commc_rope_destroy(result);
+      return NULL;
+      
+    }
+    
+    commc_rope_destroy(result);
+    result = commc_rope_create_from_string(str);
+    free(str);
+    
     return result;
     
   }
@@ -1119,7 +1173,9 @@ commc_error_t commc_rope_split(commc_rope_t* rope, size_t index,
     
     if (rope->total_length > 0) {
 
-      char* str = commc_rope_to_string(rope);
+      char* str;
+      
+      str = commc_rope_to_string(rope);
       
       if (!str) {
 
@@ -1160,7 +1216,9 @@ commc_error_t commc_rope_split(commc_rope_t* rope, size_t index,
     
     if (rope->total_length > 0) {
 
-      char* str = commc_rope_to_string(rope);
+      char* str;
+      
+      str = commc_rope_to_string(rope);
       
       if (!str) {
 

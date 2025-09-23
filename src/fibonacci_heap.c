@@ -116,6 +116,7 @@ static void add_to_root_list(commc_fibonacci_heap_t* heap, commc_fibonacci_node_
   } else {
 
     /* insert node between min_node and min_node->right */
+
     node->left = heap->min_node;
     node->right = heap->min_node->right;
     heap->min_node->right->left = node;
@@ -147,6 +148,7 @@ static void remove_from_list(commc_fibonacci_node_t* node) {
   if  (node->left == node) {
 
     /* single node in list */
+
     return;
 
   }
@@ -168,9 +170,11 @@ static void remove_from_list(commc_fibonacci_node_t* node) {
 static void link_nodes(commc_fibonacci_heap_t* heap, commc_fibonacci_node_t* node1, commc_fibonacci_node_t* node2) {
 
   /* suppress unused parameter warning */
+
   (void)heap;
 
   /* remove node2 from root list */
+  
   remove_from_list(node2);
 
   /* make node2 a child of node1 */
