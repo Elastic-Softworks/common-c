@@ -32,7 +32,7 @@
 
 #include "commc/particles.h"
 #include "commc/error.h"            /* for error reporting */
-#include "commc/math.h"             /* for vector operations */
+#include "commc/cmath.h"             /* for vector operations */
 
 /*
 	==================================

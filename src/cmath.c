@@ -1,17 +1,17 @@
 /*
    ===================================
    C O M M O N - C
-   MATH IMPLEMENTATION
+   CMATH IMPLEMENTATION
    ELASTIC SOFTWORKS 2025
    ===================================
 */
 
 /*
 
-            --- MATH MODULE ---
+            --- CMATH MODULE ---
 
     implementation of the mathematical utilities.
-    see include/commc/math.h for function
+    see include/commc/cmath.h for function
     prototypes and documentation.
 
 */
@@ -27,7 +27,7 @@
 #include <string.h>                /* for memset */
 #include <math.h>                  /* for sqrt, log, exp, etc. */
 
-#include "commc/math.h"            /* take a guess */
+#include "commc/cmath.h"            /* take a guess */
 #include "commc/error.h"           /* for error handling */
 
 /*
@@ -4311,6 +4311,976 @@ void commc_statistics_linear_regression(float* x_data, float* y_data, int data_s
     *slope_out = numerator / denominator;
     *intercept_out = y_mean - (*slope_out) * x_mean;
   }
+
+}
+
+/* 
+	==================================
+        --- COMPUTATIONAL GEOMETRY ---
+	==================================
+*/
+
+/*
+
+         commc_aabb_create()
+	       ---
+	       creates an axis-aligned bounding box from minimum
+	       and maximum coordinates. ensures proper ordering
+	       by swapping coordinates if necessary.
+
+*/
+
+commc_aabb_t commc_aabb_create(float min_x, float min_y, float max_x, float max_y) {
+
+  commc_aabb_t box;
+  
+  /* ensure min values are actually minimum */
+  if  (min_x > max_x) {
+    float temp = min_x;
+    min_x = max_x;
+    max_x = temp;
+  }
+  
+  if  (min_y > max_y) {
+    float temp = min_y;
+    min_y = max_y;
+    max_y = temp;
+  }
+  
+  box.min_x = min_x;
+  box.min_y = min_y;
+  box.max_x = max_x;
+  box.max_y = max_y;
+  
+  return box;
+
+}
+
+/*
+
+         commc_aabb_intersects()
+	       ---
+	       tests if two axis-aligned bounding boxes intersect using
+	       the separating axis theorem. two AABBs intersect if they
+	       overlap on both x and y axes.
+
+*/
+
+int commc_aabb_intersects(commc_aabb_t box1, commc_aabb_t box2) {
+
+  /* check for separation on x-axis */
+  if  (box1.max_x < box2.min_x || box2.max_x < box1.min_x) {
+    return 0; /* separated on x-axis */
+  }
+  
+  /* check for separation on y-axis */
+  if  (box1.max_y < box2.min_y || box2.max_y < box1.min_y) {
+    return 0; /* separated on y-axis */
+  }
+  
+  return 1; /* intersecting on both axes */
+
+}
+
+/*
+
+         commc_aabb_contains_point()
+	       ---
+	       tests if an AABB contains a given point.
+	       point is inside if it's within all bounds.
+
+*/
+
+int commc_aabb_contains_point(commc_aabb_t box, float x, float y) {
+
+  return (x >= box.min_x && x <= box.max_x && 
+          y >= box.min_y && y <= box.max_y);
+
+}
+
+/*
+
+         commc_aabb3d_create()
+	       ---
+	       creates a 3D axis-aligned bounding box with proper
+	       coordinate ordering for all three dimensions.
+
+*/
+
+commc_aabb3d_t commc_aabb3d_create(float min_x, float min_y, float min_z, float max_x, float max_y, float max_z) {
+
+  commc_aabb3d_t box;
+  
+  /* ensure min values are actually minimum */
+  if  (min_x > max_x) {
+    float temp = min_x;
+    min_x = max_x;
+    max_x = temp;
+  }
+  
+  if  (min_y > max_y) {
+    float temp = min_y;
+    min_y = max_y;
+    max_y = temp;
+  }
+  
+  if  (min_z > max_z) {
+    float temp = min_z;
+    min_z = max_z;
+    max_z = temp;
+  }
+  
+  box.min_x = min_x;
+  box.min_y = min_y;
+  box.min_z = min_z;
+  box.max_x = max_x;
+  box.max_y = max_y;
+  box.max_z = max_z;
+  
+  return box;
+
+}
+
+/*
+
+         commc_aabb3d_intersects()
+	       ---
+	       tests if two 3D axis-aligned bounding boxes intersect.
+	       extends the 2D algorithm to check separation on all
+	       three axes: x, y, and z.
+
+*/
+
+int commc_aabb3d_intersects(commc_aabb3d_t box1, commc_aabb3d_t box2) {
+
+  /* check for separation on x-axis */
+  if  (box1.max_x < box2.min_x || box2.max_x < box1.min_x) {
+    return 0;
+  }
+  
+  /* check for separation on y-axis */
+  if  (box1.max_y < box2.min_y || box2.max_y < box1.min_y) {
+    return 0;
+  }
+  
+  /* check for separation on z-axis */
+  if  (box1.max_z < box2.min_z || box2.max_z < box1.min_z) {
+    return 0;
+  }
+  
+  return 1; /* intersecting on all axes */
+
+}
+
+/*
+
+         commc_circle_create()
+	       ---
+	       creates a circle structure for collision detection.
+	       ensures radius is non-negative.
+
+*/
+
+commc_circle_t commc_circle_create(float center_x, float center_y, float radius) {
+
+  commc_circle_t circle;
+  
+  circle.center_x = center_x;
+  circle.center_y = center_y;
+  circle.radius   = (radius < 0.0f) ? 0.0f : radius;
+  
+  return circle;
+
+}
+
+/*
+
+         commc_circles_intersect()
+	       ---
+	       tests if two circles intersect by comparing the distance
+	       between their centers with the sum of their radii.
+	       uses squared distances to avoid expensive square root.
+
+*/
+
+int commc_circles_intersect(commc_circle_t circle1, commc_circle_t circle2) {
+
+  float dx = circle2.center_x - circle1.center_x;
+  float dy = circle2.center_y - circle1.center_y;
+  float distance_sq = dx * dx + dy * dy;
+  float radius_sum = circle1.radius + circle2.radius;
+  float radius_sum_sq = radius_sum * radius_sum;
+  
+  return distance_sq <= radius_sum_sq;
+
+}
+
+/*
+
+         commc_circle_contains_point()
+	       ---
+	       tests if a circle contains a given point using
+	       squared distance comparison to avoid square root.
+
+*/
+
+int commc_circle_contains_point(commc_circle_t circle, float x, float y) {
+
+  float dx = x - circle.center_x;
+  float dy = y - circle.center_y;
+  float distance_sq = dx * dx + dy * dy;
+  float radius_sq = circle.radius * circle.radius;
+  
+  return distance_sq <= radius_sq;
+
+}
+
+/*
+
+         commc_sphere_create()
+	       ---
+	       creates a sphere structure for 3D collision detection.
+	       ensures radius is non-negative.
+
+*/
+
+commc_sphere_t commc_sphere_create(float center_x, float center_y, float center_z, float radius) {
+
+  commc_sphere_t sphere;
+  
+  sphere.center_x = center_x;
+  sphere.center_y = center_y;
+  sphere.center_z = center_z;
+  sphere.radius   = (radius < 0.0f) ? 0.0f : radius;
+  
+  return sphere;
+
+}
+
+/*
+
+         commc_spheres_intersect()
+	       ---
+	       tests if two spheres intersect using 3D distance
+	       calculation between centers. uses squared distances
+	       for performance optimization.
+
+*/
+
+int commc_spheres_intersect(commc_sphere_t sphere1, commc_sphere_t sphere2) {
+
+  float dx = sphere2.center_x - sphere1.center_x;
+  float dy = sphere2.center_y - sphere1.center_y;
+  float dz = sphere2.center_z - sphere1.center_z;
+  float distance_sq = dx * dx + dy * dy + dz * dz;
+  float radius_sum = sphere1.radius + sphere2.radius;
+  float radius_sum_sq = radius_sum * radius_sum;
+  
+  return distance_sq <= radius_sum_sq;
+
+}
+
+/*
+
+         commc_point_in_polygon()
+	       ---
+	       tests if a point is inside a polygon using the ray casting
+	       algorithm. casts a ray from the point to the right and counts
+	       intersections with polygon edges. odd count means inside.
+
+*/
+
+int commc_point_in_polygon(commc_polygon_t polygon, float x, float y) {
+
+  int   i;
+  int   j;
+  int   intersections = 0;
+  float xi, yi, xj, yj;
+  
+  if  (!polygon.vertices || polygon.vertex_count < 3) {
+    return 0; /* invalid polygon */
+  }
+  
+  /* ray casting algorithm */
+  j = polygon.vertex_count - 1;
+  
+  for  (i = 0; i < polygon.vertex_count; i++) {
+
+    xi = polygon.vertices[i * 2];     /* x coordinate of vertex i */
+    yi = polygon.vertices[i * 2 + 1]; /* y coordinate of vertex i */
+    xj = polygon.vertices[j * 2];     /* x coordinate of vertex j */
+    yj = polygon.vertices[j * 2 + 1]; /* y coordinate of vertex j */
+    
+    /* check if ray intersects edge from j to i */
+    if  (((yi > y) != (yj > y)) && 
+         (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) {
+      intersections++;
+    }
+    
+    j = i;
+  }
+  
+  return (intersections % 2) == 1; /* odd number means inside */
+
+}
+
+/*
+
+         commc_line_clip_cohen_sutherland()
+	       ---
+	       clips a line segment against a rectangular window using
+	       the Cohen-Sutherland algorithm. uses outcodes to efficiently
+	       determine which parts of the line need clipping.
+
+*/
+
+int commc_line_clip_cohen_sutherland(commc_line_segment_t* line, float x_min, float y_min, float x_max, float y_max) {
+
+  /* outcode constants for Cohen-Sutherland algorithm */
+  int INSIDE = 0; /* 0000 */
+  int LEFT   = 1; /* 0001 */
+  int RIGHT  = 2; /* 0010 */
+  int BOTTOM = 4; /* 0100 */
+  int TOP    = 8; /* 1000 */
+  
+  int outcode1, outcode2, outcode_out;
+  float x, y;
+  
+  if  (!line) {
+    return 0;
+  }
+  
+  /* compute outcodes for both endpoints */
+
+  outcode1 = INSIDE;
+  outcode2 = INSIDE;
+  
+  if  (line->x1 < x_min) outcode1 |= LEFT;
+  else if (line->x1 > x_max) outcode1 |= RIGHT;
+  if  (line->y1 < y_min) outcode1 |= BOTTOM;
+  else if (line->y1 > y_max) outcode1 |= TOP;
+  
+  if  (line->x2 < x_min) outcode2 |= LEFT;
+  else if (line->x2 > x_max) outcode2 |= RIGHT;
+  if  (line->y2 < y_min) outcode2 |= BOTTOM;
+  else if (line->y2 > y_max) outcode2 |= TOP;
+  
+  while  (1) {
+
+    if  (!(outcode1 | outcode2)) {
+
+      /* both endpoints inside window */
+
+      return 1; /* accept line */
+
+    }
+    else if  (outcode1 & outcode2) {
+
+      /* both endpoints share at least one outside region */
+
+      return 0; /* reject line completely */
+
+    }
+
+    else {
+
+      /* line needs clipping */
+
+      outcode_out = outcode1 ? outcode1 : outcode2;
+      
+      /* find intersection point */
+
+      if  (outcode_out & TOP) {
+
+        x = line->x1 + (line->x2 - line->x1) * (y_max - line->y1) / (line->y2 - line->y1);
+
+        y = y_max;
+
+      }
+
+      else if  (outcode_out & BOTTOM) {
+
+        x = line->x1 + (line->x2 - line->x1) * (y_min - line->y1) / (line->y2 - line->y1);
+
+        y = y_min;
+
+      }
+
+      else if  (outcode_out & RIGHT) {
+
+        y = line->y1 + (line->y2 - line->y1) * (x_max - line->x1) / (line->x2 - line->x1);
+
+        x = x_max;
+
+      }
+
+      else if  (outcode_out & LEFT) {
+
+        y = line->y1 + (line->y2 - line->y1) * (x_min - line->x1) / (line->x2 - line->x1);
+
+        x = x_min;
+
+      }
+      
+      /* move outside point to intersection point */
+
+      if  (outcode_out == outcode1) {
+
+        line->x1 = x;
+        line->y1 = y;
+        outcode1 = INSIDE;
+        if (line->x1 < x_min) outcode1 |= LEFT;
+        else if (line->x1 > x_max) outcode1 |= RIGHT;
+        if (line->y1 < y_min) outcode1 |= BOTTOM;
+        else if (line->y1 > y_max) outcode1 |= TOP;
+
+      }
+
+      else {
+
+        line->x2 = x;
+        line->y2 = y;
+        outcode2 = INSIDE;
+        if (line->x2 < x_min) outcode2 |= LEFT;
+        else if (line->x2 > x_max) outcode2 |= RIGHT;
+        if (line->y2 < y_min) outcode2 |= BOTTOM;
+        else if (line->y2 > y_max) outcode2 |= TOP;
+
+      }
+    }
+  }
+
+}
+
+/*
+
+         commc_polygon_triangulate()
+	       ---
+	       triangulates a polygon using ear clipping algorithm.
+	       finds "ears" (triangles that can be cut off) and removes
+	       them iteratively until only triangles remain.
+
+*/
+
+int* commc_polygon_triangulate(commc_polygon_t polygon, int* triangle_count_out) {
+
+  int*   triangles;
+  int*   vertex_list;
+  int    vertex_count;
+  int    triangle_count;
+  int    v0, v1, v2;
+  int    i, j;
+  float  x0, y0, x1, y1, x2, y2;
+  int    is_ear;
+  int    triangle_index;
+  
+  if  (!polygon.vertices || polygon.vertex_count < 3 || !triangle_count_out) {
+
+    *triangle_count_out = 0;
+    return NULL;
+
+  }
+  
+  vertex_count = polygon.vertex_count;
+  triangle_count = vertex_count - 2;    /* n vertices = n-2 triangles */
+  
+  /* allocate arrays */
+
+  triangles = (int*)malloc(triangle_count * 3 * sizeof(int));
+  vertex_list = (int*)malloc(vertex_count * sizeof(int));
+  
+  if  (!triangles || !vertex_list) {
+
+    free(triangles);
+    free(vertex_list);
+    *triangle_count_out = 0;
+    return NULL;
+
+  }
+  
+  /* initialize vertex list */
+
+  for  (i = 0; i < vertex_count; i++) {
+
+    vertex_list[i] = i;
+
+  }
+  
+  triangle_index = 0;
+  
+  /* ear clipping algorithm */
+
+  while  (vertex_count > 3) {
+
+    is_ear = 0;
+    
+    /* find an ear */
+
+    for  (i = 0; i < vertex_count && !is_ear; i++) {
+
+      v0 = vertex_list[i];
+      v1 = vertex_list[(i + 1) % vertex_count];
+      v2 = vertex_list[(i + 2) % vertex_count];
+      
+      x0 = polygon.vertices[v0 * 2];
+      y0 = polygon.vertices[v0 * 2 + 1];
+      x1 = polygon.vertices[v1 * 2];
+      y1 = polygon.vertices[v1 * 2 + 1];
+      x2 = polygon.vertices[v2 * 2];
+      y2 = polygon.vertices[v2 * 2 + 1];
+      
+      /* check if triangle is convex (positive area) */
+
+      if  ((x1 - x0) * (y2 - y0) - (y1 - y0) * (x2 - x0) > 0.0f) {
+
+        is_ear = 1;
+        
+        /* check if any other vertex is inside this triangle */
+
+        for  (j = 0; j < vertex_count && is_ear; j++) {
+
+          int vj = vertex_list[j];
+          
+          if  (vj != v0 && vj != v1 && vj != v2) {
+
+            float xj = polygon.vertices[vj * 2];
+            float yj = polygon.vertices[vj * 2 + 1];
+            
+            /* point-in-triangle test using barycentric coordinates */
+
+            float denom = (y1 - y2) * (x0 - x2) + (x2 - x1) * (y0 - y2);
+            
+            if  (denom != 0.0f) {
+
+              float a = ((y1 - y2) * (xj - x2) + (x2 - x1) * (yj - y2)) / denom;
+              float b = ((y2 - y0) * (xj - x2) + (x0 - x2) * (yj - y2)) / denom;
+              float c = 1.0f - a - b;
+              
+              if  (a >= 0.0f && b >= 0.0f && c >= 0.0f) {
+
+                is_ear = 0; /* point is inside triangle */
+
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    if  (!is_ear) {
+
+      /* no ear found - degenerate case, add remaining triangle */
+
+      triangles[triangle_index * 3] = vertex_list[0];
+      triangles[triangle_index * 3 + 1] = vertex_list[1];
+      triangles[triangle_index * 3 + 2] = vertex_list[2];
+      triangle_index++;
+      break;
+
+    }
+    
+    /* add ear triangle to result */
+
+    triangles[triangle_index * 3] = v0;
+    triangles[triangle_index * 3 + 1] = v1;
+    triangles[triangle_index * 3 + 2] = v2;
+    triangle_index++;
+    
+    /* remove middle vertex from list */
+
+    for  (j = (i + 1) % vertex_count; j < vertex_count - 1; j++) {
+      vertex_list[j] = vertex_list[j + 1];
+
+    }
+
+    vertex_count--;
+
+  }
+  
+  /* add final triangle */
+
+  if  (vertex_count == 3) {
+    triangles[triangle_index * 3] = vertex_list[0];
+    triangles[triangle_index * 3 + 1] = vertex_list[1];
+    triangles[triangle_index * 3 + 2] = vertex_list[2];
+    triangle_index++;
+
+  }
+  
+  free(vertex_list);
+  *triangle_count_out = triangle_index;
+  return triangles;
+
+}
+
+/*
+
+         commc_convex_hull_graham_scan()
+	       ---
+	       computes convex hull of point set using Graham scan
+	       algorithm. sorts points by polar angle and uses stack
+	       to maintain hull vertices in counter-clockwise order.
+
+*/
+
+commc_convex_hull_t commc_convex_hull_graham_scan(float* points, int point_count) {
+
+  commc_convex_hull_t hull = {NULL, 0};
+  float* sorted_points;
+  float* hull_vertices;
+  int    bottom_point_index;
+  float  bottom_y;
+  int    i, j;
+  int    hull_size;
+  float  x0, y0, x1, y1, x2, y2;
+  float  cross_product;
+  
+  if  (!points || point_count < 3) {
+
+    return hull;
+
+  }
+  
+  /* allocate memory for working arrays */
+
+  sorted_points = (float*)malloc(point_count * 2 * sizeof(float));
+  hull_vertices = (float*)malloc(point_count * 2 * sizeof(float));
+  
+  if  (!sorted_points || !hull_vertices) {
+
+    free(sorted_points);
+    free(hull_vertices);
+    return hull;
+
+  }
+  
+  /* copy points for sorting */
+
+  for  (i = 0; i < point_count * 2; i++) {
+
+    sorted_points[i] = points[i];
+
+  }
+  
+  /* find bottom-most point (and leftmost if tie) */
+
+  bottom_point_index = 0;
+  bottom_y = sorted_points[1];
+  
+  for  (i = 1; i < point_count; i++) {
+
+    float y = sorted_points[i * 2 + 1];
+    
+    if  (y < bottom_y || (y == bottom_y && sorted_points[i * 2] < sorted_points[bottom_point_index * 2])) {
+
+      bottom_point_index = i;
+      bottom_y = y;
+
+    }
+  }
+  
+  /* swap bottom point to position 0 */
+
+  if  (bottom_point_index != 0) {
+
+    float temp_x = sorted_points[0];
+    float temp_y = sorted_points[1];
+    
+    sorted_points[0] = sorted_points[bottom_point_index * 2];
+    sorted_points[1] = sorted_points[bottom_point_index * 2 + 1];
+    sorted_points[bottom_point_index * 2] = temp_x;
+    sorted_points[bottom_point_index * 2 + 1] = temp_y;
+  }
+  
+  /* simple bubble sort by polar angle (for educational purposes) */
+
+  for  (i = 1; i < point_count - 1; i++) {
+
+    for  (j = i + 1; j < point_count; j++) {
+
+      x0 = sorted_points[0];
+      y0 = sorted_points[1];
+      x1 = sorted_points[i * 2];
+      y1 = sorted_points[i * 2 + 1];
+      x2 = sorted_points[j * 2];
+      y2 = sorted_points[j * 2 + 1];
+      
+      /* compute cross product to determine relative angle */
+
+      cross_product = (x1 - x0) * (y2 - y0) - (y1 - y0) * (x2 - x0);
+      
+      if  (cross_product < 0.0f) {
+
+        /* swap points */
+
+        float temp_x = sorted_points[i * 2];
+        float temp_y = sorted_points[i * 2 + 1];
+        sorted_points[i * 2] = sorted_points[j * 2];
+        sorted_points[i * 2 + 1] = sorted_points[j * 2 + 1];
+        sorted_points[j * 2] = temp_x;
+        sorted_points[j * 2 + 1] = temp_y;
+
+      }
+    }
+  }
+  
+  /* Graham scan algorithm */
+
+  hull_vertices[0] = sorted_points[0];
+  hull_vertices[1] = sorted_points[1];
+  hull_vertices[2] = sorted_points[2];
+  hull_vertices[3] = sorted_points[3];
+  hull_size = 2;
+  
+  for  (i = 2; i < point_count; i++) {
+
+    x2 = sorted_points[i * 2];
+    y2 = sorted_points[i * 2 + 1];
+    
+    /* remove points that make right turn */
+
+    while  (hull_size > 1) {
+
+      x0 = hull_vertices[(hull_size - 2) * 2];
+      y0 = hull_vertices[(hull_size - 2) * 2 + 1];
+      x1 = hull_vertices[(hull_size - 1) * 2];
+      y1 = hull_vertices[(hull_size - 1) * 2 + 1];
+      
+      cross_product = (x1 - x0) * (y2 - y0) - (y1 - y0) * (x2 - x0);
+      
+      if  (cross_product <= 0.0f) {
+
+        hull_size--; /* remove last point */
+
+      }
+      else {
+
+        break;
+
+      }
+    }
+    
+    /* add current point to hull */
+
+    hull_vertices[hull_size * 2] = x2;
+    hull_vertices[hull_size * 2 + 1] = y2;
+    hull_size++;
+
+  }
+  
+  free(sorted_points);
+  
+  hull.hull_vertices = hull_vertices;
+  hull.hull_size = hull_size;
+  
+  return hull;
+
+}
+
+/*
+
+         commc_convex_hull_destroy()
+	       ---
+	       frees memory allocated for convex hull vertices.
+
+*/
+
+void commc_convex_hull_destroy(commc_convex_hull_t* hull) {
+
+  if  (hull && hull->hull_vertices) {
+    free(hull->hull_vertices);
+    hull->hull_vertices = NULL;
+    hull->hull_size = 0;
+  }
+
+}
+
+/*
+
+         commc_fixed_create()
+	       ---
+	       creates a fixed-point number from a floating-point value.
+	       multiplies by 2^scale_bits to convert to integer representation.
+
+*/
+
+commc_fixed_t commc_fixed_create(float value, int scale_bits) {
+
+  commc_fixed_t fixed_num;
+  long scale_factor;
+  
+  if  (scale_bits < 0) scale_bits = 0;
+  if  (scale_bits > 30) scale_bits = 30; /* prevent overflow */
+  
+  scale_factor = 1L << scale_bits;
+  
+  fixed_num.value = (long)(value * (float)scale_factor);
+  fixed_num.scale_bits = scale_bits;
+  
+  return fixed_num;
+
+}
+
+/*
+
+         commc_fixed_to_float()
+	       ---
+	       converts a fixed-point number back to floating-point.
+	       divides by 2^scale_bits to restore fractional representation.
+
+*/
+
+float commc_fixed_to_float(commc_fixed_t fixed_num) {
+
+  long scale_factor = 1L << fixed_num.scale_bits;
+  return (float)fixed_num.value / (float)scale_factor;
+
+}
+
+/*
+
+         commc_fixed_add()
+	       ---
+	       adds two fixed-point numbers with same scale.
+	       simple integer addition since both have same scaling.
+
+*/
+
+commc_fixed_t commc_fixed_add(commc_fixed_t a, commc_fixed_t b) {
+
+  commc_fixed_t result;
+  
+  /* use the same scale as first operand */
+
+  result.scale_bits = a.scale_bits;
+  
+  if  (a.scale_bits == b.scale_bits) {
+    result.value = a.value + b.value;
+  }
+  else {
+
+    /* different scales - convert b to match a's scale */
+
+    if  (a.scale_bits > b.scale_bits) {
+
+      long shift = a.scale_bits - b.scale_bits;
+      result.value = a.value + (b.value << shift);
+
+    }
+
+    else {
+
+      long shift = b.scale_bits - a.scale_bits;
+      result.value = a.value + (b.value >> shift);
+
+    }
+  }
+  
+  return result;
+
+}
+
+/*
+
+         commc_fixed_multiply()
+	       ---
+	       multiplies two fixed-point numbers, handling 
+	       intermediate overflow and scale adjustment.
+
+*/
+
+commc_fixed_t commc_fixed_multiply(commc_fixed_t a, commc_fixed_t b) {
+
+  commc_fixed_t result;
+  long          temp_result;
+  long          scale_factor;
+  
+  result.scale_bits = a.scale_bits;
+  
+  /* simple multiplication with overflow detection */
+
+  temp_result = a.value * b.value;
+  
+  /* adjust for combined scaling */
+
+  if  (a.scale_bits == b.scale_bits) {
+
+    scale_factor = 1L << a.scale_bits;
+    result.value = temp_result / scale_factor;
+
+  }
+
+  else {
+
+    /* different scales - use average scale */
+
+    int avg_scale = (a.scale_bits + b.scale_bits) / 2;
+    scale_factor = 1L << avg_scale;
+    result.value = temp_result / scale_factor;
+
+  }
+  
+  return result;
+
+}
+
+/*
+
+         commc_fixed_divide()
+	       ---
+	       divides two fixed-point numbers with proper
+	       scale handling and overflow protection.
+
+*/
+
+commc_fixed_t commc_fixed_divide(commc_fixed_t a, commc_fixed_t b) {
+
+  commc_fixed_t result;
+  long          temp_numerator;
+  long          scale_factor;
+  
+  result.scale_bits = a.scale_bits;
+  
+  if  (b.value == 0) {
+
+    result.value = 0; /* avoid division by zero */
+    return result;
+
+  }
+  
+  /* scale up numerator to maintain precision */
+
+  scale_factor = 1L << a.scale_bits;
+  temp_numerator = a.value * scale_factor;
+  
+  if  (a.scale_bits == b.scale_bits) {
+
+    result.value = temp_numerator / b.value;
+
+  }
+  
+  else {
+
+    /* different scales - adjust divisor */
+
+    if  (b.scale_bits > a.scale_bits) {
+
+      long shift = b.scale_bits - a.scale_bits;
+      long adjusted_b = b.value >> shift;
+      result.value = (adjusted_b != 0) ? temp_numerator / adjusted_b : 0;
+
+    }
+
+    else {
+
+      long shift = a.scale_bits - b.scale_bits;
+      long adjusted_b = b.value << shift;
+      result.value = (adjusted_b != 0) ? temp_numerator / adjusted_b : 0;
+      
+    }
+  }
+  
+  return result;
 
 }
 

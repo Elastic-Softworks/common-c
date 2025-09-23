@@ -33,7 +33,7 @@
 
 #include <stddef.h> /* for size_t */
 #include "commc/graphics.h" /* for commc_color_t, commc_rect_t */
-#include "commc/math.h"     /* for vector operations (conceptual) */
+#include "commc/cmath.h"     /* for vector operations (conceptual) */
 
 /*
 	==================================

@@ -1,14 +1,14 @@
 /*
    ===================================
    C O M M O N - C
-   MATH UTILITIES MODULE
+   CMATH UTILITIES MODULE
    ELASTIC SOFTWORKS 2025
    ===================================
 */
 
 /*
 
-            --- MATH MODULE ---
+            --- CMATH MODULE ---
 
     this module provides common mathematical utilities
     for 2D/3D vectors and 4x4 matrices, essential for
@@ -24,8 +24,8 @@
 	==================================
 */
 
-#ifndef   COMMC_MATH_H
-#define   COMMC_MATH_H
+#ifndef   COMMC_CMATH_H
+#define   COMMC_CMATH_H
 
 #include  <math.h> 								  /* for sin, cos, sqrt, tan */
 
@@ -1400,6 +1400,302 @@ float commc_statistics_correlation(float* x_data, float* y_data, int data_size);
 
 void commc_statistics_linear_regression(float* x_data, float* y_data, int data_size, float* slope_out, float* intercept_out);
 
+/* 
+	==================================
+        --- COMPUTATIONAL GEOMETRY ---
+	==================================
+*/
+
+/* axis-aligned bounding box structure for collision detection. */
+
+typedef struct {
+
+  float min_x, min_y;     /* MINIMUM X AND Y COORDINATES */
+  float max_x, max_y;     /* MAXIMUM X AND Y COORDINATES */
+
+} commc_aabb_t;
+
+/* 3D axis-aligned bounding box structure. */
+
+typedef struct {
+
+  float min_x, min_y, min_z;     /* MINIMUM COORDINATES */
+  float max_x, max_y, max_z;     /* MAXIMUM COORDINATES */
+
+} commc_aabb3d_t;
+
+/* circle structure for 2D collision detection. */
+
+typedef struct {
+
+  float center_x, center_y;      /* CENTER COORDINATES */
+  float radius;                  /* RADIUS */
+
+} commc_circle_t;
+
+/* sphere structure for 3D collision detection. */
+
+typedef struct {
+
+  float center_x, center_y, center_z;    /* CENTER COORDINATES */  
+  float radius;                          /* RADIUS */
+
+} commc_sphere_t;
+
+/* line segment for clipping and intersection tests. */
+
+typedef struct {
+
+  float x1, y1;          /* START POINT */
+  float x2, y2;          /* END POINT */
+
+} commc_line_segment_t;
+
+/* polygon structure for triangulation and convex hull operations. */
+
+typedef struct {
+
+  float* vertices;       /* ARRAY OF X,Y COORDINATES (X1,Y1,X2,Y2,...) */
+  int    vertex_count;   /* NUMBER OF VERTICES */
+
+} commc_polygon_t;
+
+/* result structure for convex hull operations. */
+
+typedef struct {
+
+  float* hull_vertices;  /* ARRAY OF HULL VERTEX COORDINATES */
+  int    hull_size;      /* NUMBER OF VERTICES IN CONVEX HULL */
+
+} commc_convex_hull_t;
+
+/* fixed-point number type for embedded systems. */
+
+typedef struct {
+
+  long value;            /* FIXED-POINT VALUE (SCALED INTEGER) */
+  int  scale_bits;       /* NUMBER OF FRACTIONAL BITS */
+
+} commc_fixed_t;
+
+/*
+
+         commc_aabb_create()
+	       ---
+	       creates an axis-aligned bounding box from minimum
+	       and maximum coordinates.
+
+*/
+
+commc_aabb_t commc_aabb_create(float min_x, float min_y, float max_x, float max_y);
+
+/*
+
+         commc_aabb_intersects()
+	       ---
+	       tests if two axis-aligned bounding boxes intersect.
+	       uses separating axis theorem for efficient detection.
+
+*/
+
+int commc_aabb_intersects(commc_aabb_t box1, commc_aabb_t box2);
+
+/*
+
+         commc_aabb_contains_point()
+	       ---
+	       tests if an AABB contains a given point.
+	       returns 1 if point is inside, 0 otherwise.
+
+*/
+
+int commc_aabb_contains_point(commc_aabb_t box, float x, float y);
+
+/*
+
+         commc_aabb3d_create()
+	       ---
+	       creates a 3D axis-aligned bounding box from 
+	       minimum and maximum coordinates.
+
+*/
+
+commc_aabb3d_t commc_aabb3d_create(float min_x, float min_y, float min_z, float max_x, float max_y, float max_z);
+
+/*
+
+         commc_aabb3d_intersects()
+	       ---
+	       tests if two 3D axis-aligned bounding boxes intersect.
+	       extends 2D algorithm to three dimensions.
+
+*/
+
+int commc_aabb3d_intersects(commc_aabb3d_t box1, commc_aabb3d_t box2);
+
+/*
+
+         commc_circle_create()
+	       ---
+	       creates a circle structure for collision detection.
+
+*/
+
+commc_circle_t commc_circle_create(float center_x, float center_y, float radius);
+
+/*
+
+         commc_circles_intersect()
+	       ---
+	       tests if two circles intersect by comparing the distance
+	       between centers with the sum of their radii.
+
+*/
+
+int commc_circles_intersect(commc_circle_t circle1, commc_circle_t circle2);
+
+/*
+
+         commc_circle_contains_point()
+	       ---
+	       tests if a circle contains a given point using
+	       distance comparison with radius.
+
+*/
+
+int commc_circle_contains_point(commc_circle_t circle, float x, float y);
+
+/*
+
+         commc_sphere_create()
+	       ---
+	       creates a sphere structure for 3D collision detection.
+
+*/
+
+commc_sphere_t commc_sphere_create(float center_x, float center_y, float center_z, float radius);
+
+/*
+
+         commc_spheres_intersect()
+	       ---
+	       tests if two spheres intersect using 3D distance
+	       calculation between centers.
+
+*/
+
+int commc_spheres_intersect(commc_sphere_t sphere1, commc_sphere_t sphere2);
+
+/*
+
+         commc_point_in_polygon()
+	       ---
+	       tests if a point is inside a polygon using ray casting
+	       algorithm. counts intersections with polygon edges.
+
+*/
+
+int commc_point_in_polygon(commc_polygon_t polygon, float x, float y);
+
+/*
+
+         commc_line_clip_cohen_sutherland()
+	       ---
+	       clips a line segment against a rectangular window using
+	       the Cohen-Sutherland algorithm. modifies line endpoints
+	       to fit within the clipping window.
+
+*/
+
+int commc_line_clip_cohen_sutherland(commc_line_segment_t* line, float x_min, float y_min, float x_max, float y_max);
+
+/*
+
+         commc_polygon_triangulate()
+	       ---
+	       triangulates a polygon using ear clipping algorithm.
+	       returns triangle indices in counter-clockwise order.
+	       caller must free the returned triangle array.
+
+*/
+
+int* commc_polygon_triangulate(commc_polygon_t polygon, int* triangle_count_out);
+
+/*
+
+         commc_convex_hull_graham_scan()
+	       ---
+	       computes convex hull of point set using Graham scan
+	       algorithm. returns hull vertices in counter-clockwise order.
+	       caller must free hull_vertices in returned structure.
+
+*/
+
+commc_convex_hull_t commc_convex_hull_graham_scan(float* points, int point_count);
+
+/*
+
+         commc_convex_hull_destroy()
+	       ---
+	       frees memory allocated for convex hull vertices.
+
+*/
+
+void commc_convex_hull_destroy(commc_convex_hull_t* hull);
+
+/*
+
+         commc_fixed_create()
+	       ---
+	       creates a fixed-point number from a floating-point value.
+	       scale_bits determines fractional precision (typically 16).
+
+*/
+
+commc_fixed_t commc_fixed_create(float value, int scale_bits);
+
+/*
+
+         commc_fixed_to_float()
+	       ---
+	       converts a fixed-point number back to floating-point.
+
+*/
+
+float commc_fixed_to_float(commc_fixed_t fixed_num);
+
+/*
+
+         commc_fixed_add()
+	       ---
+	       adds two fixed-point numbers with same scale.
+
+*/
+
+commc_fixed_t commc_fixed_add(commc_fixed_t a, commc_fixed_t b);
+
+/*
+
+         commc_fixed_multiply()
+	       ---
+	       multiplies two fixed-point numbers, handling 
+	       intermediate overflow and scale adjustment.
+
+*/
+
+commc_fixed_t commc_fixed_multiply(commc_fixed_t a, commc_fixed_t b);
+
+/*
+
+         commc_fixed_divide()
+	       ---
+	       divides two fixed-point numbers with proper
+	       scale handling and overflow protection.
+
+*/
+
+commc_fixed_t commc_fixed_divide(commc_fixed_t a, commc_fixed_t b);
+
 /*
 
          commc_rand_seed()
@@ -1430,7 +1726,7 @@ float commc_rand_float(void);
 
 int commc_rand_int(int min_val, int max_val);
 
-#endif /* COMMC_MATH_H */
+#endif /* COMMC_CMATH_H */
 
 /*
 	==================================

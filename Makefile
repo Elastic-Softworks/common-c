@@ -62,7 +62,7 @@ SOURCES := $(SRC_DIR)/args.c \
            $(SRC_DIR)/list.c \
            $(SRC_DIR)/lockfreequeue.c \
            $(SRC_DIR)/lrucache.c \
-           $(SRC_DIR)/math.c \
+           $(SRC_DIR)/cmath.c \
            $(SRC_DIR)/memory.c \
            $(SRC_DIR)/net.c \
            $(SRC_DIR)/octree.c \
