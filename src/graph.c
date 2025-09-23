@@ -32,7 +32,7 @@
 #include "commc/error.h"
 #include "commc/queue.h"
 #include "commc/stack.h"
-#include "commc/priority_queue.h"
+#include "commc/priorityqueue.h"
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>

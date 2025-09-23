@@ -46,34 +46,34 @@ TEST_DIR := test
 
 SOURCES := $(SRC_DIR)/args.c \
            $(SRC_DIR)/audio.c \
-           $(SRC_DIR)/avl_tree.c \
-           $(SRC_DIR)/b_tree.c \
-           $(SRC_DIR)/bloom_filter.c \
-           $(SRC_DIR)/bsp_tree.c \
-           $(SRC_DIR)/circular_buffer.c \
-           $(SRC_DIR)/disjoint_set.c \
+           $(SRC_DIR)/avltree.c \
+           $(SRC_DIR)/bloomfilter.c \
+           $(SRC_DIR)/bsptree.c \
+           $(SRC_DIR)/btree.c \
+           $(SRC_DIR)/circularbuffer.c \
+           $(SRC_DIR)/disjointset.c \
            $(SRC_DIR)/error.c \
-           $(SRC_DIR)/fibonacci_heap.c \
+           $(SRC_DIR)/fibonacciheap.c \
            $(SRC_DIR)/file.c \
            $(SRC_DIR)/graph.c \
            $(SRC_DIR)/graphics.c \
-           $(SRC_DIR)/hash_table.c \
+           $(SRC_DIR)/hashtable.c \
            $(SRC_DIR)/input.c \
-           $(SRC_DIR)/lf_queue.c \
            $(SRC_DIR)/list.c \
-           $(SRC_DIR)/lru_cache.c \
+           $(SRC_DIR)/lockfreequeue.c \
+           $(SRC_DIR)/lrucache.c \
            $(SRC_DIR)/math.c \
            $(SRC_DIR)/memory.c \
            $(SRC_DIR)/net.c \
            $(SRC_DIR)/octree.c \
            $(SRC_DIR)/particles.c \
-           $(SRC_DIR)/priority_queue.c \
+           $(SRC_DIR)/priorityqueue.c \
            $(SRC_DIR)/quadtree.c \
            $(SRC_DIR)/queue.c \
-           $(SRC_DIR)/rb_tree.c \
+           $(SRC_DIR)/rbtree.c \
            $(SRC_DIR)/rope.c \
-           $(SRC_DIR)/skip_list.c \
-           $(SRC_DIR)/splay_tree.c \
+           $(SRC_DIR)/skiplist.c \
+           $(SRC_DIR)/splaytree.c \
            $(SRC_DIR)/stack.c \
            $(SRC_DIR)/string.c \
            $(SRC_DIR)/time.c \
