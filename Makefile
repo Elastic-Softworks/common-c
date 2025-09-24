@@ -47,31 +47,44 @@ TEST_DIR := test
 SOURCES := $(SRC_DIR)/args.c \
            $(SRC_DIR)/audio.c \
            $(SRC_DIR)/avltree.c \
+           $(SRC_DIR)/base64.c \
            $(SRC_DIR)/bloomfilter.c \
            $(SRC_DIR)/bsptree.c \
            $(SRC_DIR)/btree.c \
            $(SRC_DIR)/circularbuffer.c \
+           $(SRC_DIR)/config.c \
+           $(SRC_DIR)/csv.c \
+           $(SRC_DIR)/deflate.c \
+           $(SRC_DIR)/directory.c \
            $(SRC_DIR)/disjointset.c \
+           $(SRC_DIR)/endian.c \
            $(SRC_DIR)/error.c \
            $(SRC_DIR)/fibonacciheap.c \
            $(SRC_DIR)/file.c \
            $(SRC_DIR)/graph.c \
            $(SRC_DIR)/graphics.c \
            $(SRC_DIR)/hashtable.c \
+           $(SRC_DIR)/huffman.c \
            $(SRC_DIR)/input.c \
+           $(SRC_DIR)/json.c \
            $(SRC_DIR)/list.c \
            $(SRC_DIR)/lockfreequeue.c \
            $(SRC_DIR)/lrucache.c \
+           $(SRC_DIR)/lz77.c \
+           $(SRC_DIR)/magic.c \
            $(SRC_DIR)/cmath.c \
            $(SRC_DIR)/memory.c \
            $(SRC_DIR)/net.c \
            $(SRC_DIR)/octree.c \
            $(SRC_DIR)/particles.c \
+           $(SRC_DIR)/path.c \
            $(SRC_DIR)/priorityqueue.c \
            $(SRC_DIR)/quadtree.c \
            $(SRC_DIR)/queue.c \
            $(SRC_DIR)/rbtree.c \
+           $(SRC_DIR)/rle.c \
            $(SRC_DIR)/rope.c \
+           $(SRC_DIR)/serialize.c \
            $(SRC_DIR)/skiplist.c \
            $(SRC_DIR)/splaytree.c \
            $(SRC_DIR)/stack.c \
@@ -79,7 +92,10 @@ SOURCES := $(SRC_DIR)/args.c \
            $(SRC_DIR)/time.c \
            $(SRC_DIR)/tree.c \
            $(SRC_DIR)/trie.c \
-           $(SRC_DIR)/vector.c
+           $(SRC_DIR)/url.c \
+           $(SRC_DIR)/vector.c \
+           $(SRC_DIR)/watch.c \
+           $(SRC_DIR)/xml.c
 
 # object files
 
