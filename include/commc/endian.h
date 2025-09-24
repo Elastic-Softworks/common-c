@@ -398,6 +398,67 @@ void commc_endian_write_le_32(unsigned char* buffer, unsigned int value);
 
 void commc_endian_write_be_32(unsigned char* buffer, unsigned int value);
 
+/* 
+	==================================
+        --- NETWORK BYTE ORDER ---
+	==================================
+*/
+
+/*
+
+         Network Byte Order Convenience Functions
+	       ---
+	       traditional BSD-style network byte order conversion
+	       functions. network byte order is big-endian format.
+	       these are aliases for the corresponding big-endian
+	       conversion functions above.
+
+*/
+
+/*
+
+         commc_htons()
+	       ---
+	       converts 16-bit value from host to network
+	       (big-endian) byte order. alias for htobe_16.
+
+*/
+
+#define commc_htons(x) commc_endian_htobe_16(x)
+
+/*
+
+         commc_ntohs()
+	       ---
+	       converts 16-bit value from network (big-endian)
+	       to host byte order. alias for betoh_16.
+
+*/
+
+#define commc_ntohs(x) commc_endian_betoh_16(x)
+
+/*
+
+         commc_htonl()
+	       ---
+	       converts 32-bit value from host to network
+	       (big-endian) byte order. alias for htobe_32.
+
+*/
+
+#define commc_htonl(x) commc_endian_htobe_32(x)
+
+/*
+
+         commc_ntohl()
+	       ---
+	       converts 32-bit value from network (big-endian)
+	       to host byte order. alias for betoh_32.
+
+*/
+
+#define commc_ntohl(x) commc_endian_betoh_32(x)
+
 #endif /* COMMC_ENDIAN_H */
 
 /*

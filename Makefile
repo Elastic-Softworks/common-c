@@ -57,13 +57,16 @@ SOURCES := $(SRC_DIR)/args.c \
            $(SRC_DIR)/deflate.c \
            $(SRC_DIR)/directory.c \
            $(SRC_DIR)/disjointset.c \
+           $(SRC_DIR)/email.c \
            $(SRC_DIR)/endian.c \
            $(SRC_DIR)/error.c \
            $(SRC_DIR)/fibonacciheap.c \
            $(SRC_DIR)/file.c \
+           $(SRC_DIR)/ftp.c \
            $(SRC_DIR)/graph.c \
            $(SRC_DIR)/graphics.c \
            $(SRC_DIR)/hashtable.c \
+           $(SRC_DIR)/http.c \
            $(SRC_DIR)/huffman.c \
            $(SRC_DIR)/input.c \
            $(SRC_DIR)/json.c \
@@ -86,6 +89,8 @@ SOURCES := $(SRC_DIR)/args.c \
            $(SRC_DIR)/rope.c \
            $(SRC_DIR)/serialize.c \
            $(SRC_DIR)/skiplist.c \
+		   $(SRC_DIR)/socket.c \
+		   $(SRC_DIR)/socketpool.c \
            $(SRC_DIR)/splaytree.c \
            $(SRC_DIR)/stack.c \
            $(SRC_DIR)/string.c \
